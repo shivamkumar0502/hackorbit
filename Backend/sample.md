@@ -1,0 +1,10 @@
+
+
+//mongodb+srv://shivamkumar05022008:wMqxBubuiJ2Ykiww@codingadda.uy9kv6a.mongodb.net/megaproject
+JB9WJuXVgDyZtfbCFN93XjHParDEaH27
+redisPa-:bUjSLWu38Chu4GEKV9RslEaYMj9ZcBC2
+judge-97d1eaf276msh437e828a3788749p197ce5jsn2c604e36e761
+gemini-AIzaSyB2H16M0w-Q3OTQR2WrRwdJnphK5kqyoDM
+cloudN-dvyrezubm
+cloudAPI-414249125814457
+cloudse-ewKWME_z6N9TNMZaBEOvPsIX--M
