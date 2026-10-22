@@ -161,7 +161,7 @@ const [showPassword,setShowPassword] = useState(false);
 const dispatch = useDispatch();
 const navigate = useNavigate();
 
-const {isAuthenticated,loading} = useSelector((state)=>state.auth);
+const {isAuthenticated,loading,error} = useSelector((state)=>state.auth);
 
 const {
 register,
@@ -173,7 +173,7 @@ resolver:zodResolver(signupSchema)
 
 useEffect(()=>{
 if(isAuthenticated){
-navigate("/");
+navigate("/home");
 }
 },[isAuthenticated,navigate]);
 

@@ -22,14 +22,14 @@ import LandingPage from "./pages/LandingPage";
 function App(){
   
   const dispatch = useDispatch();
-  const {isAuthenticated,user,loading} = useSelector((state)=>state.auth);
+  const {isAuthenticated,user,loading,initialized} = useSelector((state)=>state.auth);
 
   // check initial authentication
   useEffect(() => {
     dispatch(checkAuth());
   }, [dispatch]);
   
-  if (loading) {
+  if (!initialized) {
     return <div className="min-h-screen flex items-center justify-center">
       <span className="loading loading-spinner loading-lg"></span>
     </div>;
@@ -164,7 +164,7 @@ export default App;
 // dispatch(checkAuth());
 // }, [dispatch]);
 
-// if (loading) {
+// if (!initialized) {
 // return (
 // <div className="min-h-screen flex items-center justify-center">
 // <span className="loading loading-spinner loading-lg"></span>
