@@ -9,6 +9,7 @@ import GridBackground from "../components/GridBackground";
 import RotatingCode from "../components/RotatingCode";
 import StackedCards from "../components/StackedCards";
 import TechOrbit from "../components/TechOrbit";
+import "./LandingPage.css";
 import Footer from "../components/Footer"
 
 function LandingPage(){
@@ -17,7 +18,7 @@ const navigate = useNavigate();
 
 return(
 
-<div className="min-h-screen bg-black text-white relative overflow-hidden">
+<div className="landing-page min-h-screen relative overflow-hidden">
 
 {/* GRID BACKGROUND */}
 <GridBackground/>
@@ -44,7 +45,7 @@ return(
 
 <h1 className="text-4xl md:text-6xl font-bold leading-tight">
 
-<span className="text-yellow-400">
+<span className="landing-accent">
 HackOrbit
 </span>
 
@@ -52,7 +53,7 @@ HackOrbit
 
 FROM BASICS<br />TO{' '}
 
-<span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+<span className="landing-headline-accent">
 BRILLIANCE
 </span>
 
@@ -74,7 +75,7 @@ practice, coding challenges and contests.
 
 <button
 onClick={()=>navigate("/home")}
-className="px-8 py-4 rounded-xl bg-white text-black font-semibold hover:scale-105 transition duration-300 shadow-lg"
+className="landing-primary px-8 py-4 rounded-xl font-semibold hover:scale-105 transition duration-300 shadow-lg"
 >
 
 Explore Problems
@@ -84,7 +85,7 @@ Explore Problems
 
 <button
 onClick={()=>navigate("/interview")}
-className="px-8 py-4 rounded-xl border border-gray-500 hover:border-purple-500 hover:text-purple-400 transition duration-300"
+className="landing-secondary px-8 py-4 rounded-xl transition duration-300"
 >
 
 Start AI Interview
@@ -100,7 +101,7 @@ Start AI Interview
 
 <div>
 
-<h2 className="text-3xl font-bold text-yellow-400">
+<h2 className="text-3xl font-bold landing-accent">
 12K+
 </h2>
 
@@ -113,7 +114,7 @@ Problems Solved
 
 <div>
 
-<h2 className="text-3xl font-bold text-blue-400">
+<h2 className="text-3xl font-bold landing-stat-blue">
 4K+
 </h2>
 
@@ -126,7 +127,7 @@ AI Interviews
 
 <div>
 
-<h2 className="text-3xl font-bold text-purple-400">
+<h2 className="text-3xl font-bold landing-stat-green">
 150+
 </h2>
 

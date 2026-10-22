@@ -19,10 +19,10 @@ const drops=Array(columns).fill(1)
 
 function draw(){
 
-ctx.fillStyle="rgba(0,0,0,0.08)"
+ctx.fillStyle="rgba(23,23,24,0.08)"
 ctx.fillRect(0,0,canvas.width,canvas.height)
 
-ctx.fillStyle="#facc15"
+ctx.fillStyle="#fa9819"
 ctx.font=fontSize+"px monospace"
 
 for(let i=0;i<drops.length;i++){
@@ -51,7 +51,7 @@ return(
 
 <canvas
 ref={canvasRef}
-className="absolute top-0 left-0 w-full h-[600px] opacity-25"
+className="absolute top-0 left-0 w-full h-[600px] opacity-10"
 />
 
 )
