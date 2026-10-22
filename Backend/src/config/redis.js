@@ -10,7 +10,8 @@
 //     }
 // });
 
-// module.exports = redisClient;
+// redisClient.on('error', () => console.error('Redis connection error'));
+module.exports = redisClient;
 
 const { createClient } = require('redis');
 
@@ -23,4 +24,5 @@ const redisClient = createClient({
   }
 });
 
+redisClient.on('error', () => console.error('Redis connection error'));
 module.exports = redisClient;

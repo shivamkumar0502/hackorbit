@@ -14,6 +14,7 @@
 
 const express = require('express')
 const app = express();
+const path = require('node:path');
 require('dotenv').config();
 
 const main = require('./config/db')
@@ -35,6 +36,7 @@ app.use(cors({
     credentials: true
 }));
 
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cookieParser());
 
@@ -55,17 +57,26 @@ app.use('/api/interview', interviewRoutes);
 app.use("/uploads", express.static("uploads"));
 
 
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+const frontendDir = path.resolve(__dirname, '../../frontend/dist');
+app.use(express.static(frontendDir));
+app.get('/{*path}', (req, res, next) => {
+    if (req.path.startsWith('/api/')) return res.status(404).json({ message: 'Route not found' });
+    res.sendFile(path.join(frontendDir, 'index.html'));
+});
+
 const InitalizeConnection = async ()=>{
     try{
         await Promise.all([main(), redisClient.connect()]);
         console.log("DB Connected");
 
-        app.listen(process.env.PORT || 5000, ()=>{
+        app.listen(process.env.PORT || 5000, '0.0.0.0', ()=>{
             console.log("Server listening at port number: "+ process.env.PORT);
         })
     }
     catch(err){
-        console.log("Error: "+err);
+        console.error('Startup failed:', err.message);
+        process.exit(1);
     }
 }
 
