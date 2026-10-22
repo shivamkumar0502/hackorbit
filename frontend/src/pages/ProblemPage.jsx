@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import { useSelector } from 'react-redux';
 import Editor from '@monaco-editor/react';
+import confetti from 'canvas-confetti';
 import { Play, Send, RotateCcw, Code2, ChevronLeft } from 'lucide-react';
 import axiosClient from '../utils/axiosClient';
 import SubmissionHistory from '../components/SubmissionHistory';
@@ -24,6 +25,9 @@ export default function ProblemPage() {
   const [caseIndex, setCaseIndex] = useState(0);
   const [result, setResult] = useState(null);
   const [busy, setBusy] = useState(null);
+  const [celebrating, setCelebrating] = useState(false);
+  const celebrationTimer = useRef(null);
+  useEffect(() => () => clearTimeout(celebrationTimer.current), []);
   const [error, setError] = useState('');
   const [fetchError, setFetchError] = useState('');
   const [reload, setReload] = useState(0);
@@ -36,6 +40,7 @@ export default function ProblemPage() {
   useEffect(() => {
     const controller = new AbortController();
     generation.current += 1;
+    setCelebrating(false); clearTimeout(celebrationTimer.current);
     setProblem(null); setFetchError(''); setResult(null); setError(''); setCaseIndex(0);
     setTab('description'); setResultTab('testcases');
     try { setDrafts(JSON.parse(localStorage.getItem(storageKey) || '{}') || {}); } catch { setDrafts({}); }
@@ -60,6 +65,14 @@ export default function ProblemPage() {
       const response = await axiosClient.post(`/submission/${mode}/${problemId}`, { code, language });
       if (current !== generation.current) return;
       setResult({ ...response.data, mode });
+      if (mode === 'submit' && response.data.accepted === true) {
+        setCelebrating(true);
+        clearTimeout(celebrationTimer.current);
+        celebrationTimer.current = setTimeout(() => setCelebrating(false), 4500);
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          for (const x of [0.12, 0.5, 0.88]) confetti({ particleCount: 90, spread: 100, origin: { x, y: 0.65 }, colors: ['#ffa116', '#45ce9a', '#60a5fa', '#f472b6'], disableForReducedMotion: true });
+        }
+      }
       if (mode === 'submit') setHistoryVersion(value => value + 1);
     } catch (err) { if (current === generation.current) setError(errorText(err)); }
     finally { running.current = false; setBusy(null); }
@@ -71,6 +84,7 @@ export default function ProblemPage() {
   const example = cases[caseIndex];
   const accepted = result?.accepted === true || result?.success === true;
   return <main className="coding-workspace">
+    {celebrating && <div role="status" className="accepted-celebration"><button aria-label="Dismiss congratulations" onClick={() => setCelebrating(false)}>×</button><span>🏆</span><h2>Congratulations!</h2><p>All testcases passed. Problem solved!</p></div>}
     <header className="workspace-header">
       <Link to="/home" className="workspace-brand"><Code2 size={23} /> HackOrbit</Link>
       <Link to="/home" className="problem-list-link"><ChevronLeft size={16} /> Problem List</Link>
@@ -89,7 +103,7 @@ export default function ProblemPage() {
           {tab === 'editorial' && <Editorial secureUrl={problem.secureUrl} thumbnailUrl={problem.thumbnailUrl} duration={problem.duration} />}
           {tab === 'solutions' && (problem.referenceSolution?.length ? problem.referenceSolution.map((solution, i) => <article key={i}><h3>{solution.language}</h3><pre>{solution.completeCode}</pre></article>) : <p>No solutions published yet.</p>)}
           {tab === 'submissions' && <SubmissionHistory key={historyVersion} problemId={problemId} />}
-          {tab === 'assistant' && <ChatAi problem={problem} />}
+          {tab === 'assistant' && <ChatAi key={problemId} problem={problem} editorCode={code} />}
         </div>
       </section>
       <div className="editor-column">

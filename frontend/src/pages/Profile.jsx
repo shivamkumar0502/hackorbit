@@ -1,323 +1,70 @@
-import { useSelector, useDispatch } from "react-redux";
-import { Trophy, Flame, Activity } from "lucide-react";
-import { useState, useEffect } from "react";
-import axiosClient from "../utils/axiosClient";
-import CalendarHeatmap from "react-calendar-heatmap";
-import "react-calendar-heatmap/dist/styles.css";
-import { subDays } from "date-fns";
-import { changePassword, uploadProfileImage } from "../authSlice";
+import { createElement, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router';
+import { Trophy, Flame, Activity, Camera, Lock, History, Code2, ArrowLeft, X } from 'lucide-react';
+import CalendarHeatmap from 'react-calendar-heatmap';
+import 'react-calendar-heatmap/dist/styles.css';
+import axiosClient from '../utils/axiosClient';
+import './Profile.css';
 
-function Profile() {
-
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-
-  const [profileData, setProfileData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  // 🔐 Change Password Modal
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-
-  // 🖼️ Image Upload
-  const [preview, setPreview] = useState(null);
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await axiosClient.get("/user/profile");
-        setProfileData(response.data);
-      } catch (error) {
-        console.error("Profile fetch error:", error);
-      }
-      setLoading(false);
-    };
-
-    fetchProfile();
-  }, []);
-
-  // 🔐 Handle Password Change
-  const handleChangePassword = () => {
-    dispatch(changePassword({ oldPassword, newPassword }));
-    setShowPasswordModal(false);
-    setOldPassword("");
-    setNewPassword("");
-  };
-
-  // 🖼️ Handle Image Upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    setPreview(URL.createObjectURL(file));
-
-    const formData = new FormData();
-    formData.append("image", file);
-
-    dispatch(uploadProfileImage(formData));
-  };
-
-  const heatmapData = profileData?.activity
-    ? Object.entries(profileData.activity).map(([date, count]) => ({
-        date,
-        count
-      }))
-    : [];
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#0f1115] text-white">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-[#0f1115] text-white p-8">
-
-      {/* 🔐 PASSWORD MODAL */}
-      {showPasswordModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-          <div className="bg-[#1a1d23] p-6 rounded-xl w-80">
-            <h2 className="text-lg font-semibold mb-4">Change Password</h2>
-
-            <input
-              type="password"
-              placeholder="Old Password"
-              className="input input-bordered w-full mb-3"
-              value={oldPassword}
-              onChange={(e) => setOldPassword(e.target.value)}
-            />
-
-            <input
-              type="password"
-              placeholder="New Password"
-              className="input input-bordered w-full mb-4"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-
-            <div className="flex justify-end gap-2">
-              <button
-                className="btn btn-sm"
-                onClick={() => setShowPasswordModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary btn-sm"
-                onClick={handleChangePassword}
-              >
-                Update
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="max-w-7xl mx-auto grid grid-cols-4 gap-6">
-
-        {/* LEFT PROFILE CARD */}
-        <div className="col-span-1 bg-[#1a1d23] rounded-xl p-6">
-
-          <div className="flex flex-col items-center">
-
-           <div className="relative">
-  {(preview || user?.profileImage) ? (
-    <img
-      src={
-        preview ||
-        `http://localhost:5000${user.profileImage}`
-      }
-      alt="profile"
-      className="w-24 h-24 rounded-full object-cover bg-[#2a2f3a]"
-    />
-  ) : (
-    <div className="w-24 h-24 rounded-full bg-[#2a2f3a] flex items-center justify-center text-xl">
-      {user?.name?.charAt(0)}
-    </div>
-  )}
-
-  <input
-    type="file"
-    className="absolute inset-0 opacity-0 cursor-pointer"
-    onChange={handleImageUpload}
-  />
-</div>
-
-            {/* NAME */}
-            <h2 className="text-xl font-semibold mt-4">
-              {user?.name}
-            </h2>
-
-            {/* EMAIL */}
-            <p className="text-gray-400 text-sm">
-              {user?.email}
-            </p>
-
-            {/* CHANGE PASSWORD */}
-            <button
-              className="btn btn-outline btn-sm mt-4"
-              onClick={() => setShowPasswordModal(true)}
-            >
-              Change Password
-            </button>
-
-          </div>
-
-          {/* Problem progress */}
-          <div className="mt-8">
-            <h3 className="font-semibold mb-4">
-              Problem Solving Progress
-            </h3>
-
-            <div className="space-y-3">
-
-              <div>
-                <span className="text-green-400">Easy</span>
-                <progress
-                  className="progress progress-success w-full"
-                  value={profileData?.easySolved || 0}
-                  max="108"
-                />
-              </div>
-
-              <div>
-                <span className="text-yellow-400">Medium</span>
-                <progress
-                  className="progress progress-warning w-full"
-                  value={profileData?.mediumSolved || 0}
-                  max="184"
-                />
-              </div>
-
-              <div>
-                <span className="text-red-400">Hard</span>
-                <progress
-                  className="progress progress-error w-full"
-                  value={profileData?.hardSolved || 0}
-                  max="35"
-                />
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        {/* RIGHT SIDE */}
-        <div className="col-span-3 space-y-6">
-
-          {/* PERFORMANCE OVERVIEW */}
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">
-              Performance Overview
-            </h2>
-
-            <div className="grid grid-cols-3 gap-4">
-
-              <div className="bg-[#1a1d23] p-5 rounded-xl flex items-center gap-3">
-                <Trophy />
-                <div>
-                  <p className="text-2xl font-bold">
-                    {profileData?.totalSolved || 0}
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    Total Solved
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-[#1a1d23] p-5 rounded-xl flex items-center gap-3">
-                <Flame />
-                <div>
-                  <p className="text-2xl font-bold">
-                    {profileData?.currentStreak || 0}
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    Current Streak
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-[#1a1d23] p-5 rounded-xl flex items-center gap-3">
-                <Activity />
-                <div>
-                  <p className="text-2xl font-bold">
-                    {profileData?.maxStreak || 0}
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    Max Streak
-                  </p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* HEATMAP */}
-          <div className="bg-[#1a1d23] rounded-xl p-6">
-            <h3 className="mb-4 font-semibold">
-              Submissions Activity
-            </h3>
-
-            <CalendarHeatmap
-              startDate={subDays(new Date(), 365)}
-              endDate={new Date()}
-              values={heatmapData}
-              classForValue={(value) => {
-                if (!value) return "color-empty";
-                if (value.count >= 4) return "color-github-4";
-                if (value.count >= 3) return "color-github-3";
-                if (value.count >= 2) return "color-github-2";
-                if (value.count >= 1) return "color-github-1";
-                return "color-empty";
-              }}
-            />
-          </div>
-
-          {/* RECENT SUBMISSIONS */}
-          <div className="bg-[#1a1d23] rounded-xl p-6">
-            <h3 className="mb-4 font-semibold">
-              Recent Submissions
-            </h3>
-
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Problem</th>
-                  <th>Status</th>
-                  <th>Language</th>
-                  <th>Time</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {profileData?.recentSubmissions?.map((s, i) => (
-                  <tr key={i}>
-                    <td>{s.problem}</td>
-                    <td className={
-                      s.status === "accepted"
-                        ? "text-green-400"
-                        : "text-red-400"
-                    }>
-                      {s.status}
-                    </td>
-                    <td>{s.language}</td>
-                    <td>{new Date(s.time).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-
-            </table>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  );
+const message = error => error.response?.data?.message || 'Request failed. Please retry.';
+function ProgressRing({ label, value, total, color }) {
+  const percent = total ? Math.min(100, value / total * 100) : 0;
+  return <div className="progress-ring-item"><div className="progress-ring" style={{ '--ring-color': color, '--progress': `${percent}%` }}><span>{percent.toFixed(1)}%</span></div><b style={{ color }}>{label}</b><small>{value}/{total}</small></div>;
 }
-
-export default Profile;
-
+export default function Profile() {
+  const user = useSelector(state => state.auth.user);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
+  const [retry, setRetry] = useState(0);
+  const [passwordModal, setPasswordModal] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [yearOffset, setYearOffset] = useState(0);
+  useEffect(() => {
+    const controller = new AbortController();
+    axiosClient.get('/user/profile', { signal: controller.signal }).then(res => { setData(res.data); setError(''); }).catch(err => { if (!controller.signal.aborted) setError(message(err)); });
+    return () => controller.abort();
+  }, [retry]);
+  async function upload(event) {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024 || !['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) { setNotice('Choose a JPEG, PNG or WebP under 2 MB.'); return; }
+    const form = new FormData(); form.append('image', file);
+    setBusy(true); setNotice('');
+    try { const response = await axiosClient.post('/user/upload-profile', form); setData(prev => ({ ...prev, profileImage: response.data.imageUrl })); setNotice('Profile photo updated.'); } catch (err) { setNotice(message(err)); } finally { setBusy(false); }
+  }
+  async function updatePassword(event) {
+    event.preventDefault(); const form = new FormData(event.currentTarget);
+    if (form.get('newPassword') !== form.get('confirmPassword')) { setPasswordError('New passwords do not match.'); return; }
+    setBusy(true); setPasswordError('');
+    try { await axiosClient.post('/user/change-password', { oldPassword: form.get('oldPassword'), newPassword: form.get('newPassword') }); setPasswordModal(false); setNotice('Password updated successfully.'); } catch (err) { setPasswordError(message(err)); } finally { setBusy(false); }
+  }
+  if (!user) return <div className="profile-state"><Link to="/login">Log in to view your profile</Link></div>;
+  if (!data) return <div className="profile-state">{error ? <><p role="alert">{error}</p><button onClick={() => setRetry(value => value + 1)}>Retry</button></> : 'Loading your progress…'}</div>;
+  const name = data.name || user.firstName || 'Coder';
+  const totals = data.problemTotals || {};
+  const total = Object.values(totals).reduce((sum, count) => sum + count, 0);
+  const end = new Date(); end.setFullYear(end.getFullYear() - yearOffset);
+  const start = new Date(end); start.setDate(start.getDate() - 364);
+  const startKey = start.toISOString().slice(0, 10), endKey = end.toISOString().slice(0, 10);
+  const heatmap = Object.entries(data.activity || {}).filter(([date]) => date >= startKey && date <= endKey).map(([date, count]) => ({ date, count }));
+  const activityTotal = heatmap.reduce((sum, day) => sum + day.count, 0);
+  const overall = total ? Math.min(100, data.totalSolved / total * 100) : 0;
+  return <main className="profile-page">
+    <nav className="profile-nav"><Link className="profile-brand" to="/home"><Code2 /> HackOrbit</Link><Link to="/home">Practice</Link><Link to="/interview">AI Interview</Link><span className="nav-streak"><Flame size={16} /> {data.currentStreak}</span><span className="nav-avatar">{name.charAt(0)}</span></nav>
+    <div className="profile-layout">
+      <aside className="profile-sidebar profile-card">
+        <div className="profile-identity"><div className="profile-avatar">{data.profileImage ? <img src={data.profileImage} alt={`${name}'s profile`} /> : <span>{name.charAt(0).toUpperCase()}</span>}<label className="avatar-upload" title="Change profile photo"><Camera size={20} /><input aria-label="Upload profile photo" type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={upload} /></label></div><h1>{name}</h1><p>{data.email || user.emailId}</p><button className="password-button" onClick={() => { setPasswordError(''); setPasswordModal(true); }}><Lock size={17} /> Change Password</button>{notice && <p className="profile-notice" role="status">{notice}</p>}</div>
+        <section className="profile-progress"><h2>Problem Solving Progress</h2><div className="progress-rings"><ProgressRing label="Easy" value={data.easySolved} total={totals.easy || 0} color="#24cd68" /><ProgressRing label="Medium" value={data.mediumSolved} total={totals.medium || 0} color="#f5bf16" /><ProgressRing label="Hard" value={data.hardSolved} total={totals.hard || 0} color="#f05262" /></div><div className="overall-label"><span>Overall Progress</span><span>{data.totalSolved}/{total}</span></div><div className="overall-track"><div style={{ width: `${overall}%` }} /></div><p className="overall-percent">{overall.toFixed(1)}% Complete</p></section>
+      </aside>
+      <div className="profile-main"><header className="profile-heading"><h2>Performance Overview</h2><p>Track your progress and achievements</p></header><div className="profile-stats">{[[Trophy, data.totalSolved, 'Total Solved'], [Flame, data.currentStreak, 'Current Streak'], [Activity, data.maxStreak, 'Max Streak']].map(([Icon, count, label]) => <article className="profile-card stat-card" key={label}><span className="stat-icon">{createElement(Icon, { size: 25 })}</span><div><strong>{count}</strong><p>{label}</p></div></article>)}</div>
+        <section className="profile-card activity-card"><div className="activity-heading"><h2><strong>{activityTotal}</strong> submissions in {yearOffset ? `${start.getFullYear()}–${end.getFullYear()}` : 'the past year'}</h2><div><button aria-label="Previous year" onClick={() => setYearOffset(value => value + 1)}>‹</button><button aria-label="Next year" disabled={!yearOffset} onClick={() => setYearOffset(value => value - 1)}>›</button></div></div><div className="activity-scroll"><CalendarHeatmap startDate={start} endDate={end} values={heatmap} gutterSize={4} classForValue={value => !value?.count ? 'activity-empty' : `activity-level-${Math.min(4, value.count)}`} titleForValue={value => value?.date ? `${value.count || 0} submissions on ${value.date}` : 'No submissions'} /></div><div className="activity-footer"><div className="heatmap-legend">Less {[0, 1, 2, 3, 4].map(level => <i key={level} className={level ? `activity-level-${level}` : 'activity-empty'} />)} More</div><span>Total active days: <b>{heatmap.length}</b> · Max streak: <b>{data.maxStreak}</b></span></div></section>
+        <section className="profile-card recent-card"><header><History size={23} /><div><h2>Recent Submissions</h2><p>Latest 10 attempts</p></div></header><div className="recent-scroll"><table><thead><tr><th>Status</th><th>Problem</th><th>Language</th><th>Time</th></tr></thead><tbody>{data.recentSubmissions.map((item, index) => <tr key={item.id || index}><td><span className={`submission-status ${item.status}`}>{item.status === 'accepted' ? '✓ Accepted' : item.status === 'wrong' ? 'Wrong Answer' : item.status === 'error' ? 'Error' : 'Pending'}</span></td><td>{item.problemId ? <Link to={`/problem/${item.problemId}`}>{item.problem}</Link> : item.problem}</td><td>{({ 'c++': 'C++', java: 'Java', javascript: 'JavaScript' })[item.language] || item.language}</td><td>{new Date(item.time).toLocaleString()}</td></tr>)}</tbody></table>{!data.recentSubmissions.length && <div className="profile-empty"><Code2 size={28} /><p>Your coding journey starts here.</p><Link to="/home">Solve your first problem →</Link></div>}</div></section><Link className="back-to-practice" to="/home"><ArrowLeft size={15} /> Back to practice</Link>
+      </div>
+    </div>
+    {passwordModal && <div className="profile-modal-backdrop"><form className="profile-card profile-modal" role="dialog" aria-modal="true" aria-labelledby="password-title" onSubmit={updatePassword}><button type="button" className="modal-close" aria-label="Close" disabled={busy} onClick={() => setPasswordModal(false)}><X size={20} /></button><h2 id="password-title">Change Password</h2><label>Current password<input required type="password" name="oldPassword" autoComplete="current-password" /></label><label>New password<input required type="password" name="newPassword" minLength={8} autoComplete="new-password" /></label><small>Use uppercase, lowercase, a number and a symbol.</small><label>Confirm new password<input required type="password" name="confirmPassword" autoComplete="new-password" /></label>{passwordError && <p role="alert" className="profile-error">{passwordError}</p>}<button className="password-button" disabled={busy}>{busy ? 'Updating…' : 'Update password'}</button></form></div>}
+  </main>;
+}

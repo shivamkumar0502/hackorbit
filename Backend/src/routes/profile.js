@@ -1,9 +1,10 @@
-const express = require("express");
+const express = require('express');
+const multer = require('multer');
+const { getUserProfile, changePassword, uploadProfile } = require('../controllers/userProfileController');
+const auth = require('../middleware/userMiddleware');
 const router = express.Router();
-
-const { getUserProfile } = require("../controllers/userProfileController");
-const authMiddleware = require("../middleware/userMiddleware");
-
-router.get("/profile", authMiddleware, getUserProfile);
-
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 2 * 1024 * 1024 }, fileFilter: (req, file, cb) => cb(null, ['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype)) });
+router.get('/profile', auth, getUserProfile);
+router.post('/change-password', auth, changePassword);
+router.post('/upload-profile', auth, (req, res) => upload.single('image')(req, res, error => error ? res.status(400).json({ message: 'Choose an image under 2 MB.' }) : uploadProfile(req, res)));
 module.exports = router;
