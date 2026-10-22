@@ -48,7 +48,8 @@ async function uploadProfile(req, res) {
   try {
     if (!req.file) return res.status(400).json({ message: 'Choose a JPEG, PNG or WebP image under 2 MB.' });
     const cloudinary = require('cloudinary').v2;
-    cloudinary.config({ cloud_name: process.env.CLOUDINARY_CLOUD_NAME, api_key: process.env.CLOUDINARY_API_KEY, api_secret: process.env.CLOUDINARY_API_SECRET });
+    const clean = value => String(value || '').trim().replace(/^['"]/,'').replace(/['"],?$/, '');
+    cloudinary.config({ cloud_name: clean(process.env.CLOUDINARY_CLOUD_NAME), api_key: clean(process.env.CLOUDINARY_API_KEY), api_secret: clean(process.env.CLOUDINARY_API_SECRET) });
     const uploaded = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream({ folder: 'hackorbit/profiles', public_id: String(req.result._id), overwrite: true, resource_type: 'image', transformation: [{ width: 320, height: 320, crop: 'fill' }] }, (error, result) => error ? reject(error) : resolve(result));
       stream.end(req.file.buffer);
