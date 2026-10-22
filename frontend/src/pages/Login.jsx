@@ -154,7 +154,7 @@ resolver:zodResolver(loginSchema)
 
 useEffect(()=>{
 if(isAuthenticated){
-navigate("/");
+navigate("/home");
 }
 },[isAuthenticated,navigate]);
 
@@ -167,6 +167,7 @@ return(
 <div className="min-h-screen flex items-center justify-center bg-[#0b0b0f] text-white">
 
 {/* CARD */}
+{error && <p role="alert" className="fixed top-6 text-red-400">{error}</p>}
 
 <div className="w-[380px] backdrop-blur-lg bg-[#111217]/90 border border-[#2a2d34] rounded-xl shadow-xl p-8">
 
@@ -334,7 +335,7 @@ export default Login;
 
 // useEffect(()=>{
 // if(isAuthenticated){
-// navigate("/");
+// navigate("/home");
 // }
 // },[isAuthenticated,navigate]);
 
@@ -360,7 +361,7 @@ export default Login;
 //     console.log(res.data.user);
 
 //     // redirect
-//     navigate("/");
+//     navigate("/home");
 
 //   } catch (error) {
 //     console.error(error);
