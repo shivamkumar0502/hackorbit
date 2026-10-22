@@ -1,176 +1,20 @@
-
-
-
-import { useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import TechBackground from "../components/TechBackground";
-import GridBackground from "../components/GridBackground";
-// import ParticleBackground from "../components/ParticleBackground";
-import RotatingCode from "../components/RotatingCode";
-import StackedCards from "../components/StackedCards";
-import TechOrbit from "../components/TechOrbit";
-import "./LandingPage.css";
-import Footer from "../components/Footer"
-
-function LandingPage(){
-
-const navigate = useNavigate();
-
-return(
-
-<div className="landing-page min-h-screen relative overflow-hidden">
-
-{/* GRID BACKGROUND */}
-<GridBackground/>
-
-{/* BINARY RAIN */}
-<TechBackground/>
-
-{/* PARTICLES */}
-{/* <ParticleBackground/> */}
-
-{/* ROTATING CODE CIRCLE */}
-<RotatingCode/>
-
-{/* NAVBAR */}
-<Navbar/>
-
-{/* ================= HERO SECTION ================= */}
-
-<div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 pt-20 pb-24 grid md:grid-cols-2 gap-10 items-center">
-
-{/* LEFT CONTENT */}
-
-<div>
-
-<h1 className="text-4xl md:text-6xl font-bold leading-tight">
-
-<span className="landing-accent">
-HackOrbit
-</span>
-
-<br/>
-
-FROM BASICS<br />TO{' '}
-
-<span className="landing-headline-accent">
-BRILLIANCE
-</span>
-
-</h1>
-
-
-<p className="text-gray-400 mt-6 max-w-xl text-lg">
-
-HackOrbit helps developers master Data Structures,
-Algorithms and technical interviews using AI powered
-practice, coding challenges and contests.
-
-</p>
-
-
-{/* BUTTONS */}
-
-<div className="flex flex-wrap gap-4 mt-10">
-
-<button
-onClick={()=>navigate("/home")}
-className="landing-primary px-8 py-4 rounded-xl font-semibold hover:scale-105 transition duration-300 shadow-lg"
->
-
-Explore Problems
-
-</button>
-
-
-<button
-onClick={()=>navigate("/interview")}
-className="landing-secondary px-8 py-4 rounded-xl transition duration-300"
->
-
-Start AI Interview
-
-</button>
-
-</div>
-
-
-{/* STATS */}
-
-<div className="flex flex-wrap gap-8 md:gap-16 mt-16">
-
-<div>
-
-<h2 className="text-3xl font-bold landing-accent">
-12K+
-</h2>
-
-<p className="text-gray-400 text-sm">
-Problems Solved
-</p>
-
-</div>
-
-
-<div>
-
-<h2 className="text-3xl font-bold landing-stat-blue">
-4K+
-</h2>
-
-<p className="text-gray-400 text-sm">
-AI Interviews
-</p>
-
-</div>
-
-
-<div>
-
-<h2 className="text-3xl font-bold landing-stat-green">
-150+
-</h2>
-
-<p className="text-gray-400 text-sm">
-Companies Covered
-</p>
-
-</div>
-
-</div>
-
-</div>
-
-
-{/* RIGHT ROBOT */}
-
-<div className="flex justify-center">
-
-<img
-src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
-alt="Friendly coding robot"
-className="w-[420px] max-w-full animate-[float_6s_ease-in-out_infinite]"
-/>
-
-</div>
-
-</div>
-
-
-{/* ================= ENGINEERING SECTION ================= */}
-
-<div className="relative z-10">
-
-<StackedCards/>
-<TechOrbit/>
-<Footer/>
-</div>
-
-</div>
-
-
-)
-
+import { Link } from 'react-router';
+import { ArrowRight, Check, Code2, CalendarDays, Route, Users, Sparkles, Network, Bookmark, ChevronRight } from 'lucide-react';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import './LandingPage.css';
+const features = [
+ { icon: CalendarDays, title: 'A little progress, every day.', text: 'Take the daily challenge and build a practice streak that means something.', label: 'Daily challenge', to: '/learn', accent: 'amber' },
+ { icon: Route, title: 'Find your way through DSA.', text: 'Follow a concept roadmap and track the problems you have actually solved.', label: 'Explore the roadmap', to: '/roadmap', accent: 'blue' },
+ { icon: Users, title: 'Practice with a real person.', text: 'Invite a friend to a private coding room. Share an editor, switch roles and give feedback.', label: 'Start a peer interview', to: '/peer', accent: 'green' },
+ { icon: Sparkles, title: 'Prepare with a company in mind.', text: 'Choose your company, role and interview round. Review your answers and next steps.', label: 'Choose an interview', to: '/interview', accent: 'violet' },
+ { icon: Network, title: 'See the idea click.', text: 'Step through sorting, searching and graph traversal. Make the invisible decisions visible.', label: 'Open DSA visualiser', to: '/visualizer', accent: 'blue' },
+ { icon: Bookmark, title: 'Remember what you learned.', text: 'Keep private notes on tricky problems and bring them back into your revision routine.', label: 'Your revision list', to: '/revision', accent: 'amber' },
+];
+function FeatureCard({feature}) {
+ const Icon=feature.icon;
+ return <article className={`home-feature home-accent-${feature.accent}`}><span className="home-feature-icon"><Icon size={22}/></span><h3>{feature.title}</h3><p>{feature.text}</p><Link to={feature.to}>{feature.label}<ArrowRight size={15}/></Link></article>;
 }
-
-export default LandingPage;
+export default function LandingPage() {
+ return <div className="landing-page"><Navbar/><main className="home-content"><section className="home-hero" aria-labelledby="hero-title"><div className="home-hero-copy"><div className="home-kicker"><span/> A PLACE TO GET BETTER AT CODING</div><h1 id="hero-title">Build the habit.<br/>Own the <span>interview.</span></h1><p>One problem, one insight, one better explanation. Practice DSA, understand the patterns and prepare for your next opportunity.</p><div className="home-hero-actions"><Link className="home-primary" to="/practice">Start practicing<ArrowRight size={17}/></Link><Link className="home-secondary" to="/roadmap">Find your learning path</Link></div><div className="home-benefits"><span><Check size={14}/>Save your progress</span><span><Check size={14}/>Learn at your pace</span><span><Check size={14}/>Practice together</span></div></div><div className="home-demo"><div className="home-code-window"><header><span className="home-window-dots"><i/><i/><i/></span><span><Code2 size={14}/>array-total.js</span><span className="home-code-label">WORKED EXAMPLE</span></header><div className="home-code-body"><span className="home-code-comment">// Small steps. Clear thinking.</span><pre><span className="home-code-keyword">const</span>{' values = [3, -1, 8, 2];\n'}<span className="home-code-keyword">let</span>{' total = 0;\n\n'}<span className="home-code-keyword">for</span>{' ('}<span className="home-code-keyword">const</span>{' value of values) {\n  total += value;\n}\n\n'}<span className="home-code-call">console.log</span>{'(total);'}</pre></div><div className="home-example-result"><div><span className="home-result-icon"><Check size={16}/></span><b>Follow the running total</b><span className="home-result-answer">12</span></div><p>0 <ChevronRight size={12}/>3<ChevronRight size={12}/>2<ChevronRight size={12}/>10<ChevronRight size={12}/><strong>12</strong></p><small>Time O(n) · Extra space O(1)</small></div></div><div className="home-demo-caption"><span className="home-caption-line"/><p>Understand the <b>why</b> behind every line.</p></div></div></section><section className="home-entry-strip" aria-label="Choose a practice mode"><Link to="/learn"><span>01</span><div><b>Make today count</b><small>Try the daily challenge</small></div><ArrowRight size={18}/></Link><Link to="/events"><span>02</span><div><b>Put yourself on the clock</b><small>Explore scheduled contests</small></div><ArrowRight size={18}/></Link><Link to="/dashboard"><span>03</span><div><b>See your momentum</b><small>Open your dashboard</small></div><ArrowRight size={18}/></Link></section><section className="home-toolkit" aria-labelledby="toolkit-title"><header className="home-section-heading"><div><span className="home-eyebrow">YOUR PRACTICE TOOLKIT</span><h2 id="toolkit-title">More than another problem list.</h2></div><p>A clear next step, wherever you are in your learning journey.</p></header><div className="home-feature-grid">{features.map(feature=><FeatureCard key={feature.to} feature={feature}/>)}</div></section><section className="home-bottom-cta"><div><span className="home-eyebrow">YOUR NEXT STEP IS A SMALL ONE</span><h2>Show up. Think it through.<br/>Come back a little stronger.</h2><p>Pick a problem and give yourself the space to figure it out.</p></div><Link className="home-primary" to="/practice">Find your next problem<ArrowRight size={17}/></Link></section></main><Footer/></div>;
+}
