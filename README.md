@@ -28,3 +28,11 @@ The workspace stores drafts locally per user, problem and language. Run displays
 The landing and practice footers offer email, WhatsApp and phone contact. WhatsApp and email drafts require the visitor to press Send in their messaging app. To enable automatic feedback email, configure `SMTP_HOST`, `SMTP_PORT` (587 by default, 465 for implicit TLS), `SMTP_USER`, `SMTP_PASS`, and `SMTP_FROM` in Render environment variables. The recipient is fixed to the site owner's address; visitor email is only used as Reply-To. SMTP failure never reports successful delivery, and drafts remain available. No feedback messages are stored in the database. Public email submissions are limited to ten requests per IP per hour per service instance; use an external rate limiter if scaling to multiple instances.
 
 Validation: `node --test frontend/tests/*.test.mjs`, `npm test --prefix Backend`, and `npm run build --prefix frontend`.
+
+### Dashboard and personal contests
+
+`/dashboard` loads the signed-in user's real profile statistics, recent submissions and saved company interview sessions. `/contest` offers personal timed practice rounds, not scheduled multiplayer events. Logged-out visitors see a sign-in prompt; signing in from these prompts returns them to the requested workspace.
+
+The authenticated `/api/contest` routes persist rounds in MongoDB. Start supports 30, 60 or 90 minutes, chooses up to three actual problems, and limits each user to one active round via a partial unique index. GET resumes rounds and returns the server clock; POST `/:id/finish` closes only an owned round and is idempotent. Progress deduplicates accepted problems submitted within the server-defined round window. Leaving the page does not pause the timer. Sessions are practice records, not ranked competitive results. The UI refreshes progress every 20 seconds, on window focus, or via Refresh progress.
+
+The shared navbar now also appears on the landing page. `/hackorbit-mark.svg` is HackOrbit's original vector brand mark used in the navbar and favicon; `frontend/index.html` defines the browser title and description.

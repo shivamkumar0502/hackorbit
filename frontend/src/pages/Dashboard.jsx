@@ -1,0 +1,25 @@
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router';
+import PlatformNav from '../components/PlatformNav';
+import MemberPrompt from '../components/MemberPrompt';
+import DailyActivity from '../components/DailyActivity';
+import axiosClient from '../utils/axiosClient';
+import './Platform.css';
+import './Workspace.css';
+export default function Dashboard() {
+  const user = useSelector(state => state.auth.user);
+  const [profile, setProfile] = useState(null), [sessions, setSessions] = useState([]), [error, setError] = useState(''), [interviewError, setInterviewError] = useState(false), [retry, setRetry] = useState(0);
+  useEffect(() => {
+    if (!user) return;
+    const controller = new AbortController();
+    Promise.allSettled(['/user/profile', '/interview/sessions'].map(path => axiosClient.get(path, { signal: controller.signal }))).then(results => {
+      if (controller.signal.aborted) return;
+      if (results[0].status === 'fulfilled') { setProfile(results[0].value.data); setError(''); } else setError('Unable to load your progress. Please retry.');
+      setInterviewError(results[1].status !== 'fulfilled');
+      if (results[1].status === 'fulfilled') setSessions(results[1].value.data);
+    });
+    return () => controller.abort();
+  }, [user, retry]);
+  return <main className="hub-page"><PlatformNav />{!user ? <MemberPrompt title="Your learning dashboard" destination="/dashboard">See your solved problems, practice activity and saved interviews in one place.</MemberPrompt> : <><header className="workspace-heading"><span className="hub-eyebrow">YOUR LEARNING, IN FOCUS</span><h1>Welcome back, {user.firstName}.</h1><p>Pick up where you left off. Build a little momentum every day.</p></header>{error && <p role="alert" className="hub-error">{error} <button onClick={() => setRetry(value => value + 1)}>Retry</button></p>}{!profile && !error && <p role="status">Loading your dashboard…</p>}{profile && <><div className="workspace-stats">{[['Problems solved', profile.totalSolved], ['Current streak', `${profile.currentStreak} days`], ['Longest streak', `${profile.maxStreak} days`]].map(([label, value]) => <section className="hub-card" key={label}><span>{label}</span><strong>{value}</strong></section>)}</div><div className="dashboard-columns"><section className="hub-card workspace-panel"><h2>Continue learning</h2><div className="workspace-actions"><Link to="/practice"><b>Practice problems</b><span>Find your next DSA challenge →</span></Link><Link to="/contest"><b>Timed contest practice</b><span>30, 60 or 90 minutes of focused coding →</span></Link><Link to="/visualizer"><b>DSA visualiser</b><span>See algorithms one step at a time →</span></Link><Link to="/profile"><b>Your full profile</b><span>Activity, submissions and account settings →</span></Link></div></section><DailyActivity activity={profile.activity} /></div><section className="hub-card workspace-panel"><div className="workspace-row"><h2>Recent submissions</h2><Link className="hub-link" to="/profile">View profile →</Link></div>{profile.recentSubmissions.length ? <ul className="workspace-list">{profile.recentSubmissions.slice(0, 5).map(item => <li key={item.id}><div>{item.problemId ? <Link to={`/problem/${item.problemId}`}>{item.problem}</Link> : item.problem}<small>{new Date(item.time).toLocaleDateString('en-IN')} · {item.language}</small></div><span className={`submission-outcome ${item.status}`}>{item.status}</span></li>)}</ul> : <p className="hub-muted">Your submissions will appear here after you start practicing.</p>}</section></>}<section className="hub-card workspace-panel"><div className="workspace-row"><h2>Company interviews</h2><Link className="hub-link" to="/interview">New interview →</Link></div>{interviewError ? <p role="alert">Interview history could not load. <button onClick={() => setRetry(value => value + 1)}>Retry</button></p> : sessions.length ? <ul className="workspace-list">{sessions.slice(0, 4).map(session => <li key={session._id}><div><b>{session.config.company}</b><small>{session.config.role} · {session.config.round}</small></div><Link className="hub-button secondary" to={session.status === 'completed' ? `/interview-result/${session._id}` : `/live-interview/${session._id}`}>{session.status === 'completed' ? 'View report' : 'Resume'}</Link></li>)}</ul> : <p className="hub-muted">No saved interviews yet. Choose your company and round to get started.</p>}</section></>}</main>;
+}

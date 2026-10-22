@@ -36,13 +36,13 @@ return(
 
 {/* ================= HERO SECTION ================= */}
 
-<div className="relative z-10 max-w-7xl mx-auto px-10 pt-32 pb-40 grid md:grid-cols-2 gap-10 items-center">
+<div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 pt-20 pb-24 grid md:grid-cols-2 gap-10 items-center">
 
 {/* LEFT CONTENT */}
 
 <div>
 
-<h1 className="text-6xl font-bold leading-tight">
+<h1 className="text-4xl md:text-6xl font-bold leading-tight">
 
 <span className="text-yellow-400">
 HackOrbit
@@ -50,8 +50,7 @@ HackOrbit
 
 <br/>
 
-FROM BASICS  
-TO  
+FROM BASICS<br />TO{' '}
 
 <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
 BRILLIANCE
@@ -71,7 +70,7 @@ practice, coding challenges and contests.
 
 {/* BUTTONS */}
 
-<div className="flex gap-6 mt-10">
+<div className="flex flex-wrap gap-4 mt-10">
 
 <button
 onClick={()=>navigate("/home")}
@@ -97,7 +96,7 @@ Start AI Interview
 
 {/* STATS */}
 
-<div className="flex gap-16 mt-16">
+<div className="flex flex-wrap gap-8 md:gap-16 mt-16">
 
 <div>
 
@@ -148,7 +147,8 @@ Companies Covered
 
 <img
 src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
-className="w-[420px] animate-[float_6s_ease-in-out_infinite]"
+alt="Friendly coding robot"
+className="w-[420px] max-w-full animate-[float_6s_ease-in-out_infinite]"
 />
 
 </div>

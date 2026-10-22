@@ -2,9 +2,9 @@
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { z } from 'zod';
 // import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate, NavLink } from 'react-router'; 
+// import { NavLink } from 'react-router'; 
 // import { loginUser } from "../authSlice";
-// import { useEffect, useState } from 'react';
+// import { useState } from 'react';
 
 
 // const loginSchema = z.object({
@@ -15,7 +15,7 @@
 // function Login() {
 //   const [showPassword, setShowPassword] = useState(false);
 //   const dispatch = useDispatch();
-//   const navigate = useNavigate();
+//   
 //   const { isAuthenticated, loading, error } = useSelector((state) => state.auth);
 //   const {
 //     register,
@@ -126,9 +126,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, NavLink } from 'react-router';
+import { NavLink } from 'react-router';
 import { loginUser } from "../authSlice";
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const loginSchema = z.object({
   emailId: z.string().email("Invalid Email"),
@@ -140,9 +140,9 @@ function Login() {
 const [showPassword,setShowPassword] = useState(false);
 
 const dispatch = useDispatch();
-const navigate = useNavigate();
 
-const {isAuthenticated,loading,error} = useSelector((state)=>state.auth);
+
+const {loading,error} = useSelector((state)=>state.auth);
 
 const {
 register,
@@ -152,11 +152,7 @@ formState:{errors},
 resolver:zodResolver(loginSchema)
 });
 
-useEffect(()=>{
-if(isAuthenticated){
-navigate("/home");
-}
-},[isAuthenticated,navigate]);
+
 
 const onSubmit = (data)=>{
 dispatch(loginUser(data))
@@ -302,9 +298,9 @@ export default Login;
 // import { zodResolver } from '@hookform/resolvers/zod';
 // import { z } from 'zod';
 // import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate, NavLink } from 'react-router';
+// import { NavLink } from 'react-router';
 // import { loginUser } from "../authSlice";
-// import { useEffect, useState } from 'react';
+// import { useState } from 'react';
 
 // // ✅ NEW IMPORTS
 // import { signInWithPopup } from "firebase/auth";
@@ -321,9 +317,9 @@ export default Login;
 // const [showPassword,setShowPassword] = useState(false);
 
 // const dispatch = useDispatch();
-// const navigate = useNavigate();
+// 
 
-// const {isAuthenticated,loading,error} = useSelector((state)=>state.auth);
+// const {loading,error} = useSelector((state)=>state.auth);
 
 // const {
 // register,

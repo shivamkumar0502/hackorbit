@@ -1,5 +1,5 @@
 
-import {Routes, Route ,Navigate} from "react-router";
+import {Routes, Route ,Navigate, useLocation} from "react-router";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Homepage from "./pages/Homepage";
@@ -20,10 +20,14 @@ import InterviewLobby from "./pages/InterviewLobby";
 import LandingPage from "./pages/LandingPage";
 
 import Visualizer from './pages/Visualizer';
+import Dashboard from './pages/Dashboard';
+import Contest from './pages/Contest';
 
 function App(){
   
   const dispatch = useDispatch();
+  const location = useLocation();
+  const loginDestination = ['/dashboard', '/contest'].includes(location.state?.from) ? location.state.from : '/home';
   const {isAuthenticated,user,initialized} = useSelector((state)=>state.auth);
 
   // check initial authentication
@@ -45,10 +49,12 @@ function App(){
 
 <Route path="/" element={<LandingPage />} />
 <Route path="/visualizer" element={<Visualizer />} />
+<Route path="/dashboard" element={<Dashboard />} />
+<Route path="/contest" element={<Contest />} />
 
 {/* Auth */}
 
-<Route path="/login" element={isAuthenticated ? <Navigate to="/home" /> : <Login />} />
+<Route path="/login" element={isAuthenticated ? <Navigate to={loginDestination} replace /> : <Login />} />
 
 <Route path="/signup" element={isAuthenticated ? <Navigate to="/home" /> : <Signup />} />
 
