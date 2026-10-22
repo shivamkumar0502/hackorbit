@@ -19,6 +19,8 @@ import InterviewResult from "./pages/InterviewResult";
 import InterviewLobby from "./pages/InterviewLobby";
 import LandingPage from "./pages/LandingPage";
 
+import Visualizer from './pages/Visualizer';
+
 function App(){
   
   const dispatch = useDispatch();
@@ -42,6 +44,7 @@ function App(){
 {/* Landing Page */}
 
 <Route path="/" element={<LandingPage />} />
+<Route path="/visualizer" element={<Visualizer />} />
 
 {/* Auth */}
 

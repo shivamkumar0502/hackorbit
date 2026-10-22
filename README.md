@@ -20,3 +20,11 @@ MongoDB connectivity is required at startup. Logout revocations are stored as to
 The workspace stores drafts locally per user, problem and language. Run displays sample-test output; Submit displays hidden-test counts and verdicts. Local drafts are specific to the current browser.
 
 `Backend/.env` is already tracked in this public repository. Rotate any real credentials stored there and remove that file from tracking; ignoring it alone does not remove existing Git history.
+
+### DSA visualiser and feedback
+
+`/visualizer` is a public learning workspace with bubble, insertion and selection sort, linear and binary search, and undirected BFS/DFS. Inputs are bounded for readable animations; use Apply input & reset after editing. Binary search sorts a working copy and reports its displayed index. Graph traversal covers the component reachable from the chosen start node.
+
+The landing and practice footers offer email, WhatsApp and phone contact. WhatsApp and email drafts require the visitor to press Send in their messaging app. To enable automatic feedback email, configure `SMTP_HOST`, `SMTP_PORT` (587 by default, 465 for implicit TLS), `SMTP_USER`, `SMTP_PASS`, and `SMTP_FROM` in Render environment variables. The recipient is fixed to the site owner's address; visitor email is only used as Reply-To. SMTP failure never reports successful delivery, and drafts remain available. No feedback messages are stored in the database. Public email submissions are limited to ten requests per IP per hour per service instance; use an external rate limiter if scaling to multiple instances.
+
+Validation: `node --test frontend/tests/*.test.mjs`, `npm test --prefix Backend`, and `npm run build --prefix frontend`.

@@ -5,6 +5,8 @@ import { Trophy, Flame, Activity, Camera, Lock, History, Code2, ArrowLeft, X } f
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import axiosClient from '../utils/axiosClient';
+import PlatformNav from '../components/PlatformNav';
+import './Platform.css';
 import './Profile.css';
 
 const message = error => error.response?.data?.message || 'Request failed. Please retry.';
@@ -54,7 +56,7 @@ export default function Profile() {
   const activityTotal = heatmap.reduce((sum, day) => sum + day.count, 0);
   const overall = total ? Math.min(100, data.totalSolved / total * 100) : 0;
   return <main className="profile-page">
-    <nav className="profile-nav"><Link className="profile-brand" to="/home"><Code2 /> HackOrbit</Link><Link to="/home">Practice</Link><Link to="/interview">AI Interview</Link><span className="nav-streak"><Flame size={16} /> {data.currentStreak}</span><span className="nav-avatar">{name.charAt(0)}</span></nav>
+    <PlatformNav />
     <div className="profile-layout">
       <aside className="profile-sidebar profile-card">
         <div className="profile-identity"><div className="profile-avatar">{data.profileImage ? <img src={data.profileImage} alt={`${name}'s profile`} /> : <span>{name.charAt(0).toUpperCase()}</span>}<label className="avatar-upload" title="Change profile photo"><Camera size={20} /><input aria-label="Upload profile photo" type="file" accept="image/png,image/jpeg,image/webp" disabled={busy} onChange={upload} /></label></div><h1>{name}</h1><p>{data.email || user.emailId}</p><button className="password-button" onClick={() => { setPasswordError(''); setPasswordModal(true); }}><Lock size={17} /> Change Password</button>{notice && <p className="profile-notice" role="status">{notice}</p>}</div>

@@ -54,6 +54,7 @@ app.use('/video', videoRouter);
 app.use('/api/video', videoRouter);
 app.use('/interview', interviewRoutes);
 app.use('/api/interview', interviewRoutes);
+app.use('/api/feedback', require('./routes/feedback'));
 app.use("/uploads", express.static("uploads"));
 
 
