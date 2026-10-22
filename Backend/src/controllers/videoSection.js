@@ -16,7 +16,7 @@ async function saveVideoMetadata(req,res){
  try{const {problemId,cloudinaryPublicId}=req.body||{};
  if(!valid(problemId)||typeof cloudinaryPublicId!=='string'||!new RegExp(`^hackorbit/solutions/${problemId}/${req.result._id}/[a-f0-9-]{36}$`).test(cloudinaryPublicId))return res.status(400).json({message:'Invalid upload reference. Upload the video again from this problem page.'});
  if(!await Problem.exists({_id:problemId}))return res.status(404).json({message:'Problem not found.'});
- const {cloudinary}=configureCloudinary(),asset=await cloudinary.api.resource(cloudinaryPublicId,{resource_type:'video'});
+ const {cloudinary}=configureCloudinary(),asset=await cloudinary.api.resource(cloudinaryPublicId,{resource_type:'video',media_metadata:true});
  if(asset.resource_type!=='video'||asset.public_id!==cloudinaryPublicId||!Number.isFinite(asset.duration)||asset.duration<0||asset.bytes>100*1024*1024||!/^https:\/\//.test(asset.secure_url||''))return res.status(400).json({message:'The uploaded asset must be a valid video of at most 100 MB.'});
  const thumbnailUrl=cloudinary.url(asset.public_id,{resource_type:'video',format:'jpg',secure:true,transformation:[{width:400,height:225,crop:'fill'},{start_offset:'0'}]});
  const video=await SolutionVideo.findOneAndUpdate({cloudinaryPublicId},{$setOnInsert:{problemId,userId:req.result._id,cloudinaryPublicId,secureUrl:asset.secure_url,duration:asset.duration,thumbnailUrl}},{upsert:true,new:true,runValidators:true});
