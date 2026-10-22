@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { Play, Pause, SkipBack, SkipForward, RotateCcw, Network, BarChart3 } from 'lucide-react';
 import PlatformNav from '../components/PlatformNav';
 import { ALGORITHMS, parseArray, parseGraph, arrayFrames, graphFrames } from '../utils/visualizer';
@@ -6,8 +7,11 @@ import './Platform.css';
 import './Visualizer.css';
 const initial = [34, 12, 48, 7, 26, 19, 41, 5];
 export default function Visualizer() {
-  const [algorithm, setAlgorithm] = useState('bubble'), [input, setInput] = useState(initial.join(', ')), [target, setTarget] = useState('26'), [edges, setEdges] = useState('0-1, 0-2, 1-3, 1-4, 2-5, 4-5'), [start, setStart] = useState('0');
-  const [frames, setFrames] = useState(() => arrayFrames('bubble', initial)), [step, setStep] = useState(0), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(600), [error, setError] = useState('');
+  const [params] = useSearchParams();
+  const requested = params.get('algorithm');
+  const initialAlgorithm = Object.hasOwn(ALGORITHMS, requested) ? requested : 'bubble';
+  const [algorithm, setAlgorithm] = useState(initialAlgorithm), [input, setInput] = useState(initial.join(', ')), [target, setTarget] = useState('26'), [edges, setEdges] = useState('0-1, 0-2, 1-3, 1-4, 2-5, 4-5'), [start, setStart] = useState('0');
+  const [frames, setFrames] = useState(() => ['bfs','dfs'].includes(initialAlgorithm) ? graphFrames(initialAlgorithm, parseGraph('0-1, 0-2, 1-3, 1-4, 2-5, 4-5', 0), 0) : arrayFrames(initialAlgorithm, initial, 26)), [step, setStep] = useState(0), [playing, setPlaying] = useState(false), [speed, setSpeed] = useState(600), [error, setError] = useState('');
   const graphMode = ['bfs', 'dfs'].includes(algorithm), searching = ['linear', 'binary'].includes(algorithm), frame = frames[step], meta = ALGORITHMS[algorithm];
   const running = playing && step < frames.length - 1;
   useEffect(() => { if (!playing || step >= frames.length - 1) return; const timer = setTimeout(() => setStep(value => value + 1), speed); return () => clearTimeout(timer); }, [playing, step, speed, frames.length]);

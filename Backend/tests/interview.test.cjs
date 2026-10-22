@@ -64,3 +64,12 @@ test('practice report averages only evaluated answers and handles sparse saved a
   const report = reportFor({ _id: 'test', config: {}, mode: 'ai', status: 'completed', questions: [{ title: 'one', prompt: 'one', checklist: [] }, { title: 'two', prompt: 'two', checklist: [] }], answers: [null, { index: 0, answer: 'First', feedback: { source: 'ai', technical: 8, clarity: 6, problemSolving: 7 } }, { index: 1, answer: 'Second', feedback: { source: 'self-review' } }] });
   assert.equal(report.answeredCount, 2); assert.equal(report.evaluatedCount, 1); assert.equal(report.scores.overall, 7); assert.equal(report.questions[1].response.answer, 'Second');
 });
+
+test('interview improvement plan separates evaluated strengths from self-review priorities', () => {
+  const { reportFor } = require('../src/controllers/interviewController');
+  const base = { _id: 'test', config: {}, mode: 'guided', status: 'completed', questions: [{ title: 'one', prompt: 'one', checklist: ['Explain state'] }, { title: 'two', prompt: 'two', checklist: [] }] };
+  const guided = reportFor({ ...base, answers: [{ index: 0, answer: 'My answer', feedback: { source: 'self-review', improvements: ['Explain state'] } }] });
+  assert.deepEqual(guided.learningPlan.strengths, []); assert.equal(guided.scores.overall, null); assert.deepEqual(guided.learningPlan.reviewPriorities, ['Explain state']); assert.match(guided.learningPlan.nextSteps[0], /1 unanswered/);
+  const evaluated = reportFor({ ...base, mode: 'ai', answers: [{ index: 0, answer: 'My answer', feedback: { source: 'ai', technical: 5, clarity: 6, problemSolving: 4, strengths: ['Clear assumptions'], improvements: ['Check edge cases'] } }] });
+  assert.deepEqual(evaluated.learningPlan.strengths, ['Clear assumptions']); assert.ok(evaluated.learningPlan.nextSteps.some(step => step.includes('two-minute')));
+});

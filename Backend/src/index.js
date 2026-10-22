@@ -56,6 +56,9 @@ app.use('/interview', interviewRoutes);
 app.use('/api/interview', interviewRoutes);
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/contest', require('./routes/contest'));
+app.use('/api/learn', require('./routes/learn'));
+app.use('/api/peer', require('./routes/peer'));
+app.use('/api/events', require('./routes/events'));
 app.use("/uploads", express.static("uploads"));
 
 

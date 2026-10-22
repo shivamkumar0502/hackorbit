@@ -22,12 +22,18 @@ import LandingPage from "./pages/LandingPage";
 import Visualizer from './pages/Visualizer';
 import Dashboard from './pages/Dashboard';
 import Contest from './pages/Contest';
+import Learn from './pages/Learn';
+import Roadmap from './pages/Roadmap';
+import Revision from './pages/Revision';
+import Peer from './pages/Peer';
+import Events from './pages/Events';
 
 function App(){
   
   const dispatch = useDispatch();
   const location = useLocation();
-  const loginDestination = ['/dashboard', '/contest'].includes(location.state?.from) ? location.state.from : '/home';
+  const from = location.state?.from;
+  const loginDestination = typeof from === 'string' && (/^\/(dashboard|contest|learn|roadmap|revision|peer|events)$/.test(from) || /^\/peer\/[a-f0-9]{32}$/.test(from) || /^\/events\/[a-f0-9]{24}$/.test(from)) ? from : '/home';
   const {isAuthenticated,user,initialized} = useSelector((state)=>state.auth);
 
   // check initial authentication
@@ -51,6 +57,13 @@ function App(){
 <Route path="/visualizer" element={<Visualizer />} />
 <Route path="/dashboard" element={<Dashboard />} />
 <Route path="/contest" element={<Contest />} />
+<Route path="/learn" element={<Learn />} />
+<Route path="/roadmap" element={<Roadmap />} />
+<Route path="/revision" element={<Revision />} />
+<Route path="/peer" element={<Peer />} />
+<Route path="/peer/:invite" element={<Peer />} />
+<Route path="/events" element={<Events />} />
+<Route path="/events/:eventId" element={<Events />} />
 
 {/* Auth */}
 
