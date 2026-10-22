@@ -28,7 +28,7 @@ const submitRouter = require("./routes/submit")
 const aiRouter = require("./routes/aiChatting")
 const videoRouter = require("./routes/videoCreator");
 const interviewRoutes = require("./routes/interview");
-const redisClient = require('./config/redis');
+
 
 
 app.use(cors({
@@ -67,7 +67,7 @@ app.get('/{*path}', (req, res, next) => {
 
 const InitalizeConnection = async ()=>{
     try{
-        await Promise.all([main(), redisClient.connect()]);
+        await main();
         console.log("DB Connected");
 
         app.listen(process.env.PORT || 5000, '0.0.0.0', ()=>{

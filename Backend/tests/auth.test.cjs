@@ -7,7 +7,7 @@ let foundUser=null;
 const mockUser={findOne:async()=>foundUser};
 Module._load=function(id,parent,...args){
  if(parent?.filename===root+'/src/controllers/userAuthent.js'){
-  if(id==='../config/redis') return {};
+  if(id==='../utils/tokenBlocklist') return {};
   if(id==='../models/user') return mockUser;
   if(id==='../models/submission') return {};
  }
