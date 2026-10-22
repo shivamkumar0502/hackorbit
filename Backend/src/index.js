@@ -74,6 +74,10 @@ const InitalizeConnection = async ()=>{
     try{
         await main();
         console.log("DB Connected");
+        try {
+            const library = await require('./services/installPracticeProblems')();
+            console.log('Practice library', library);
+        } catch { console.error('Practice library installation failed. Retry from the admin video manager.'); }
 
         app.listen(process.env.PORT || 5000, '0.0.0.0', ()=>{
             console.log("Server listening at port number: "+ process.env.PORT);

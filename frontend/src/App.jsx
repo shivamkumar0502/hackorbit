@@ -69,7 +69,7 @@ function App(){
 
 <Route path="/login" element={isAuthenticated ? <Navigate to={loginDestination} replace /> : <Login />} />
 
-<Route path="/signup" element={isAuthenticated ? <Navigate to="/home" /> : <Signup />} />
+<Route path="/signup" element={isAuthenticated ? <Navigate to={loginDestination} replace /> : <Signup />} />
 
 {/* Main Platform */}
 <Route path="/practice" element={isAuthenticated ? <Homepage /> : <Navigate to="/login" />} />

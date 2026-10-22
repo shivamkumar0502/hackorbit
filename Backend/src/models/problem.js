@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const problemSchema = new Schema({
+    seedKey: { type: String, unique: true, sparse: true },
     companies: { type: [String], default: [] },
     title:{
         type:String,

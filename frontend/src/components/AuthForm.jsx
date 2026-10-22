@@ -1,0 +1,15 @@
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router';
+import { loginUser, registerUser } from '../authSlice';
+import '../pages/Auth.css';
+export default function AuthForm({ signup = false }) {
+ const dispatch=useDispatch(),location=useLocation(),{loading,error}=useSelector(state=>state.auth),[show,setShow]=useState(false);
+ const schema=z.object({...(signup?{firstName:z.string().trim().min(3,'Use at least 3 characters.').max(20,'Use up to 20 characters.')} :{}),emailId:z.string().trim().email('Enter a valid email.'),password:signup?z.string().min(8,'Use at least 8 characters.').regex(/[a-z]/,'Add a lowercase letter.').regex(/[A-Z]/,'Add an uppercase letter.').regex(/[0-9]/,'Add a number.').regex(/[^A-Za-z0-9]/,'Add a symbol.'):z.string().min(1,'Enter your password.')});
+ const {register,handleSubmit,formState:{errors}}=useForm({resolver:zodResolver(schema)});
+ const title=signup?'Create your account':'Welcome back';
+ return <main className="auth-page"><Link to="/" className="auth-brand"><img src="/hackorbit-mark.svg" width="35" height="35" alt=""/>HackOrbit</Link><section className="auth-panel"><span className="auth-eyebrow">CODE. PRACTICE. GROW.</span><h1>{title}</h1><p>{signup?'Start your next chapter of learning.':'Continue your practice, interviews and learning roadmap.'}</p>{error&&<p role="alert" className="auth-error">{typeof error==='string'?error:error.message||'Unable to authenticate. Please retry.'}</p>}<form onSubmit={handleSubmit(data=>dispatch(signup?registerUser(data):loginUser(data)))}>{signup&&<label htmlFor="auth-name">Name<input id="auth-name" autoComplete="given-name" {...register('firstName')}/>{errors.firstName&&<small role="alert">{errors.firstName.message}</small>}</label>}<label htmlFor="auth-email">Email<input id="auth-email" type="email" autoComplete="username" {...register('emailId')}/>{errors.emailId&&<small role="alert">{errors.emailId.message}</small>}</label><label htmlFor="auth-password">Password<div className="auth-password"><input id="auth-password" type={show?'text':'password'} autoComplete={signup?'new-password':'current-password'} {...register('password')}/><button type="button" onClick={()=>setShow(value=>!value)} aria-label={show?'Hide password':'Show password'}>{show?'Hide':'Show'}</button></div>{errors.password&&<small role="alert">{errors.password.message}</small>}</label>{signup&&<p className="auth-hint">8+ characters with uppercase, lowercase, a number and a symbol.</p>}<button className="auth-submit" type="submit" disabled={loading}>{loading?(signup?'Creating account…':'Logging in…'):signup?'Create account':'Log in'}</button></form><p className="auth-switch">{signup?'Already have an account?':'New to HackOrbit?'} <Link to={signup?'/login':'/signup'} state={location.state}>{signup?'Log in':'Sign up'}</Link></p><Link className="auth-back" to="/">← Back to home</Link></section></main>;
+}
