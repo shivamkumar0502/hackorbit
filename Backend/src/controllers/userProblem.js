@@ -221,41 +221,22 @@ const getProblemById = async(req,res)=>{
 // };
 
 
-const getAllProblem = async(req,res)=>{
-
-  try{
-
-   const getProblem = await Problem.find({}).select('_id title difficulty tags');
-   if(getProblem.length==0)
-    return res.status(404).send("Problem is Missing");
-
-    res.status(200).send(getProblem);
-  }
-  catch(err){
-    res.status(500).send("Error: " +err);
-  }
-}
-
-
-
-const solvedAllProblembyUser =  async(req,res)=>{
-   
-    try{
-       
-      const userId = req.result._id;
-
-      const user =  await User.findById(userId).populate({
-        path:"problemSolved",
-        select:"_id title difficulty tags"
-      });
-      
-      res.status(200).send(user.problemSolved);
-
-    }
-    catch(err){
-      res.status(500).send("Server Error");
-    }
-}
+const getAllProblem = async (req, res) => {
+  try {
+    const [problems, counts] = await Promise.all([
+      Problem.find({}).select('_id title difficulty tags companies').lean(),
+      Submission.aggregate([{ $match: { status: { $in: ['accepted', 'wrong', 'error'] } } }, { $group: { _id: '$problemId', total: { $sum: 1 }, accepted: { $sum: { $cond: [{ $eq: ['$status', 'accepted'] }, 1, 0] } } } }]),
+    ]);
+    const lookup = new Map(counts.map(row => [String(row._id), row]));
+    res.json(problems.map(problem => ({ ...problem, totalSubmissions: lookup.get(String(problem._id))?.total || 0, acceptedSubmissions: lookup.get(String(problem._id))?.accepted || 0 })));
+  } catch { res.status(500).json({ message: 'Unable to load problems.' }); }
+};
+const solvedAllProblembyUser = async (req, res) => {
+  try {
+    const ids = await Submission.distinct('problemId', { userId: req.result._id, status: 'accepted' });
+    res.json(await Problem.find({ _id: { $in: ids } }).select('_id title difficulty tags'));
+  } catch { res.status(500).json({ message: 'Unable to load solved problems.' }); }
+};
 
 // const submittedProblem = async(req,res)=>{
 //   try{

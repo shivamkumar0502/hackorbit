@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const problemSchema = new Schema({
+    companies: { type: [String], default: [] },
     title:{
         type:String,
         required:true

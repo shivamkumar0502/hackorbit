@@ -1,18 +1,12 @@
-const express = require("express");
-
-const router = express.Router();
-
-const {
-generateInterview,
-evaluateAnswer,
-generateInterviewReport
-} = require("../controllers/interviewController");
-
-
-router.post("/generate",generateInterview);
-
-router.post("/evaluate",evaluateAnswer);
-
-router.post("/report",generateInterviewReport);
-
+const router = require('express').Router();
+const auth = require('../middleware/userMiddleware');
+const controller = require('../controllers/interviewController');
+router.use(auth);
+router.get('/options', controller.options);
+router.get('/sessions', controller.listSessions);
+router.post('/generate', controller.generateInterview);
+router.post('/evaluate', controller.evaluateAnswer);
+router.post('/report', controller.generateInterviewReport);
+router.get('/sessions/:id', controller.getSession);
+router.get('/sessions/:id/report', controller.getReport);
 module.exports = router;

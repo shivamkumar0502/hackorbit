@@ -1,195 +1,30 @@
-import { useNavigate } from "react-router-dom";
-
-function InterviewPage(){
-
-const navigate = useNavigate();
-
-return(
-
-<div className="min-h-screen bg-[#0b0d12] text-white">
-
-{/* HERO SECTION */}
-
-<div className="max-w-7xl mx-auto px-8 pt-16">
-
-<h1 className="text-5xl font-bold mb-4">
-
-AI Mock Interviews 🚀
-
-</h1>
-
-<p className="text-gray-400 text-lg max-w-xl">
-
-Practice real AI powered interviews with voice, camera and instant
-feedback. Improve your technical skills and get hired faster.
-
-</p>
-
-<button
-onClick={()=>navigate("/live-interview")}
-className="mt-8 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-500 rounded-lg font-semibold hover:scale-105 transition"
->
-
-Start New Interview
-
-</button>
-
-</div>
-
-
-{/* FEATURES */}
-
-<div className="max-w-7xl mx-auto px-8 mt-20 grid grid-cols-3 gap-6">
-
-<div className="bg-[#151821] p-6 rounded-xl hover:bg-[#1c2029] transition">
-
-<h3 className="text-xl font-semibold mb-3">
-
-🎤 Voice Interview
-
-</h3>
-
-<p className="text-gray-400">
-
-Answer interview questions using your voice. AI listens and analyzes your response.
-
-</p>
-
-</div>
-
-
-<div className="bg-[#151821] p-6 rounded-xl hover:bg-[#1c2029] transition">
-
-<h3 className="text-xl font-semibold mb-3">
-
-📷 Camera Analysis
-
-</h3>
-
-<p className="text-gray-400">
-
-AI analyzes your confidence, eye contact and body language.
-
-</p>
-
-</div>
-
-
-<div className="bg-[#151821] p-6 rounded-xl hover:bg-[#1c2029] transition">
-
-<h3 className="text-xl font-semibold mb-3">
-
-🤖 AI Feedback
-
-</h3>
-
-<p className="text-gray-400">
-
-Get instant feedback on your answers with improvement tips.
-
-</p>
-
-</div>
-
-</div>
-
-
-{/* INTERVIEW LIST */}
-
-<div className="max-w-7xl mx-auto px-8 mt-20">
-
-<h2 className="text-2xl font-semibold mb-6">
-
-Recent Interviews
-
-</h2>
-
-<div className="grid grid-cols-3 gap-6">
-
-<div className="bg-[#151821] p-6 rounded-xl">
-
-<h3 className="text-lg font-semibold">
-
-Frontend Developer
-
-</h3>
-
-<p className="text-gray-400 mt-2">
-
-Difficulty: Medium
-
-</p>
-
-<button className="mt-4 text-purple-400">
-
-View Report →
-
-</button>
-
-</div>
-
-
-<div className="bg-[#151821] p-6 rounded-xl">
-
-<h3 className="text-lg font-semibold">
-
-Backend Developer
-
-</h3>
-
-<p className="text-gray-400 mt-2">
-
-Difficulty: Hard
-
-</p>
-
-<button className="mt-4 text-purple-400">
-
-View Report →
-
-</button>
-
-</div>
-
-
-<div className="bg-[#151821] p-6 rounded-xl">
-
-<h3 className="text-lg font-semibold">
-
-React Developer
-
-</h3>
-
-<p className="text-gray-400 mt-2">
-
-Difficulty: Easy
-
-</p>
-
-<button className="mt-4 text-purple-400">
-
-View Report →
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-
-{/* FOOTER */}
-
-<div className="text-center text-gray-500 mt-24 pb-10">
-
-
-</div>
-
-</div>
-
-)
-
+import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Building2, ArrowRight, Clock, Target, MessageSquare, ChevronRight, Play, History } from 'lucide-react';
+import PlatformNav from '../components/PlatformNav';
+import axiosClient from '../utils/axiosClient';
+import './Platform.css';
+import './Interview.css';
+const companyNames = ['Google', 'Amazon', 'Microsoft', 'Meta', 'Uber', 'General'];
+export default function InterviewPage() {
+  const [params] = useSearchParams();
+  const [config, setConfig] = useState({ company: companyNames.includes(params.get('company')) ? params.get('company') : 'Google', role: 'Software Engineer', round: 'DSA', difficulty: 'medium', experience: 'Entry level' });
+  const [options, setOptions] = useState(null), [sessions, setSessions] = useState([]), [mode, setMode] = useState('auto'), [error, setError] = useState(''), [busy, setBusy] = useState(false), [retry, setRetry] = useState(0);
+  const starting = useRef(false);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const controller = new AbortController();
+    axiosClient.get('/interview/options', { signal: controller.signal }).then(res => { setOptions(res.data); setError(''); }).catch(err => { if (!controller.signal.aborted) setError(err.response?.data?.message || 'Unable to load interview options. Please retry.'); });
+    axiosClient.get('/interview/sessions', { signal: controller.signal }).then(res => setSessions(res.data)).catch(() => {});
+    return () => controller.abort();
+  }, [retry]);
+  async function start(event) {
+    event.preventDefault(); if (starting.current) return;
+    starting.current = true; setBusy(true); setError('');
+    try { const response = await axiosClient.post('/interview/generate', { ...config, mode }, { timeout: 35000 }); navigate(`/live-interview/${response.data._id}`); }
+    catch (err) { setError(err.response?.data?.message || 'Unable to start the interview. Please retry.'); }
+    finally { starting.current = false; setBusy(false); }
+  }
+  const choose = (key, value) => setConfig(previous => ({ ...previous, [key]: value }));
+  return <main className="hub-page"><PlatformNav /><div className="interview-intro"><span className="hub-eyebrow">PRACTICE WITH A PURPOSE</span><h1>Walk into your next interview<br /><span>with a plan.</span></h1><p>Company-focused mock interviews. Your role, your round, your pace.</p></div><div className="interview-setup-layout"><form onSubmit={start} className="hub-card interview-config"><div className="section-title"><span className="section-step">01</span><div><h2>Choose your target</h2><p>Independent practice inspired by engineering competencies.</p></div></div><div className="company-choices">{companyNames.map((company, index) => <button disabled={busy} type="button" aria-pressed={config.company === company} key={company} className={config.company === company ? 'selected' : ''} onClick={() => choose('company', company)}><span className={`company-mark company-mark-${index}`}>{company === 'General' ? <Building2 size={18} /> : company.charAt(0)}</span>{company}</button>)}</div><div className="company-focus"><Target size={17} /><p>{options?.companies?.[config.company]?.focus || 'Choose a company to focus your practice.'}</p></div><div className="section-title"><span className="section-step">02</span><div><h2>Shape your interview</h2><p>Match the session to your preparation.</p></div></div><div className="config-fields">{[['role', 'Target role', options?.roles || ['Software Engineer', 'Frontend Developer', 'Backend Developer', 'Full Stack Developer']], ['round', 'Interview round', options?.rounds || ['DSA', 'System Design', 'Behavioral', 'Role Fundamentals']], ['experience', 'Experience', ['Student', 'Entry level', 'Experienced']], ['difficulty', 'Difficulty', ['easy', 'medium', 'hard']]].map(([key, label, choices]) => <label key={key}>{label}<select disabled={busy} value={config[key]} onChange={event => choose(key, event.target.value)}>{choices.map(value => <option value={value} key={value}>{value}</option>)}</select></label>)}</div><label className="mode-choice">Question mode<select value={mode} disabled={busy} onChange={event => setMode(event.target.value)}><option value="auto">AI questions with guided fallback</option><option value="guided">Guided question bank</option></select></label><p className="setup-disclaimer">These are original mock questions, not official or previously asked company questions. Guided mode works without an AI key; it uses review checklists instead of AI scores.</p>{error && <div className="hub-error" role="alert">{error}{!options && <button type="button" onClick={() => setRetry(value => value + 1)}>Retry loading options</button>}</div>}<button className="hub-button primary start-interview" disabled={busy || !options}>{busy ? 'Preparing your interview…' : 'Start mock interview'}<ArrowRight size={17} /></button></form><aside className="interview-setup-aside"><section className="hub-card session-preview"><span className="hub-eyebrow">YOUR SESSION</span><h2>{config.company}<br /><span>{config.round} round</span></h2><div className="preview-details"><p><Building2 size={16} />{config.role}</p><p><Clock size={16} />5 questions · roughly 25 minutes</p><p><MessageSquare size={16} />Type your answer or use optional voice input</p><p><Target size={16} />Feedback or self-review after each answer</p></div><div className="preview-footnote">Your submitted answers and session are saved to your account. Unsubmitted drafts stay in this browser.</div></section><section className="interview-how"><h3>A focused preparation loop</h3><ol><li>Clarify the problem before answering.</li><li>Explain your reasoning and trade-offs.</li><li>Save your answer and explore the follow-up.</li><li>Review your report and improve one thing.</li></ol></section></aside></div><section className="interview-history"><div className="section-title"><History size={21} /><div><h2>Your interviews</h2><p>Resume a session or revisit your answers.</p></div></div>{sessions.length ? <div className="history-grid">{sessions.map(session => <Link className="hub-card history-card" key={session._id} to={session.status === 'completed' ? `/interview-result/${session._id}` : `/live-interview/${session._id}`}><div><span className="history-company">{session.config.company}</span><span className={`history-status ${session.status}`}>{session.status === 'completed' ? 'Completed' : 'In progress'}</span></div><h3>{session.config.round}</h3><p>{session.config.role} · {session.config.difficulty}</p><footer><span>{new Date(session.createdAt).toLocaleDateString()}</span>{session.status === 'completed' ? 'View report' : <><Play size={12} /> Resume</>}<ChevronRight size={14} /></footer></Link>)}</div> : <div className="hub-card history-empty">Your first session starts here. Choose a target above.</div>}</section><footer className="hub-footer">Mock interviews for learning. No affiliation with the companies listed.</footer></main>;
 }
-
-export default InterviewPage;
