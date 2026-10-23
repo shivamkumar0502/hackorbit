@@ -7,7 +7,10 @@ import { Play, Send, RotateCcw, Code2, ChevronLeft } from 'lucide-react';
 import axiosClient from '../utils/axiosClient';
 import SubmissionHistory from '../components/SubmissionHistory';
 import ChatAi from '../components/ChatAi';
+import RevisionEditor from '../components/RevisionEditor';
 import Editorial from '../components/Editorial';
+import ProblemHints from '../components/ProblemHints';
+import ProblemDiscussion from '../components/ProblemDiscussion';
 import './ProblemPage.css';
 
 const languages = { javascript: 'JavaScript', java: 'Java', cpp: 'C++' };
@@ -96,13 +99,16 @@ export default function ProblemPage() {
     <div className="workspace-panels">
       <section className="statement-panel workspace-card">
         <nav className="workspace-tabs" aria-label="Problem information">
-          {['description', 'editorial', 'solutions', 'submissions', 'assistant'].map(name => <button key={name} aria-pressed={tab === name} className={tab === name ? 'selected' : ''} onClick={() => setTab(name)}>{name}</button>)}
+          {['description', 'editorial', 'solutions', 'submissions', 'assistant', 'hints', 'discussion', 'notes'].map(name => <button key={name} aria-pressed={tab === name} className={tab === name ? 'selected' : ''} onClick={() => setTab(name)}>{name}</button>)}
         </nav>
         <div className="statement-content">
           {tab === 'description' && <><h1>{problem.title}</h1><div className="problem-meta"><span className={`difficulty ${problem.difficulty?.toLowerCase()}`}>{problem.difficulty}</span>{(Array.isArray(problem.tags) ? problem.tags : [problem.tags]).filter(Boolean).map(tag => <span key={tag}>{tag}</span>)}</div><div className="problem-description">{problem.description}</div>{cases.map((item, i) => <article className="example" key={i}><h3>Example {i + 1}</h3><div><p><b>Input: </b><code>{item.input}</code></p><p><b>Output: </b><code>{item.output}</code></p>{item.explanation && <p><b>Explanation: </b>{item.explanation}</p>}</div></article>)}</>}
           {tab === 'editorial' && <Editorial secureUrl={problem.secureUrl} thumbnailUrl={problem.thumbnailUrl} duration={problem.duration} />}
           {tab === 'solutions' && (problem.referenceSolution?.length ? problem.referenceSolution.map((solution, i) => <article key={i}><h3>{solution.language}</h3><pre>{solution.completeCode}</pre></article>) : <p>No solutions published yet.</p>)}
           {tab === 'submissions' && <SubmissionHistory key={historyVersion} problemId={problemId} />}
+          {tab === 'hints' && <ProblemHints key={problemId} problemId={problemId}/>}
+          {tab === 'discussion' && <ProblemDiscussion key={problemId} problemId={problemId}/>}
+          {tab === 'notes' && <RevisionEditor key={problemId} problemId={problemId} />}
           {tab === 'assistant' && <ChatAi key={problemId} problem={problem} editorCode={code} />}
         </div>
       </section>

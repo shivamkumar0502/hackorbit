@@ -1,0 +1,10 @@
+import { useState } from 'react';
+import useResource from '../hooks/useResource';
+import axiosClient from '../utils/axiosClient';
+export default function RevisionEditor({problemId}){
+ const resource=useResource(`/learn/revision/${problemId}`),[draft,setDraft]=useState(null),[busy,setBusy]=useState(false),[notice,setNotice]=useState('');
+ const values=draft||{notes:resource.data?.notes||'',status:resource.data?.status||'revisit',days:7};
+ const set=(key,value)=>{setDraft({...values,[key]:value});setNotice('');};
+ async function save(event){event.preventDefault();setBusy(true);setNotice('');try{await axiosClient.put(`/learn/revision/${problemId}`,values);setNotice('Revision notes saved to your account.');resource.reload();}catch(err){setNotice(err.response?.data?.message||'Could not save notes. Please retry.');}finally{setBusy(false);}}
+ return <form className="revision-editor" onSubmit={save}><h3>Your private revision notes</h3>{resource.error&&<p role="alert">{resource.error} <button type="button" onClick={resource.reload}>Retry</button></p>}<label>Approach, mistakes and edge cases<textarea rows={7} maxLength={8000} value={values.notes} onChange={event=>set('notes',event.target.value)} placeholder="What would you explain differently next time?"/></label><label>Learning status<select value={values.status} onChange={event=>set('status',event.target.value)}><option value="learning">Learning</option><option value="revisit">Revisit</option><option value="mastered">Mastered</option></select></label><label>Review again in<select value={values.days} onChange={event=>set('days',Number(event.target.value))}><option value={0}>Today</option><option value={1}>1 day</option><option value={3}>3 days</option><option value={7}>7 days</option><option value={14}>14 days</option><option value={30}>30 days</option></select></label><button type="submit" disabled={busy||resource.loading||Boolean(resource.error)}>{busy?'Saving…':'Save to revision list'}</button><p role="status">{notice}</p></form>;
+}

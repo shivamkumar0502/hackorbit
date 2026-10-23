@@ -6,6 +6,8 @@ const {createProblem,updateProblem,deleteproblem,getProblemById,getAllProblem,so
 const userMiddleware = require("../middleware/userMiddleware");
 
 
+problemRouter.post('/install-core', adminMiddleware, async(req,res)=>{try{res.json(await require('../services/installPracticeProblems')({force:true}));}catch{res.status(500).json({message:'Unable to install the practice library. Please retry.'});}});
+
 // Create
 problemRouter.post("/create",adminMiddleware ,createProblem);
 problemRouter.put("/update/:id",adminMiddleware, updateProblem);

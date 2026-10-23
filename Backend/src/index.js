@@ -54,6 +54,12 @@ app.use('/video', videoRouter);
 app.use('/api/video', videoRouter);
 app.use('/interview', interviewRoutes);
 app.use('/api/interview', interviewRoutes);
+app.use('/api/feedback', require('./routes/feedback'));
+app.use('/api/contest', require('./routes/contest'));
+app.use('/api/learn', require('./routes/learn'));
+app.use('/api/practice', require('./routes/practiceGrowth'));
+app.use('/api/peer', require('./routes/peer'));
+app.use('/api/events', require('./routes/events'));
 app.use("/uploads", express.static("uploads"));
 
 
@@ -69,6 +75,10 @@ const InitalizeConnection = async ()=>{
     try{
         await main();
         console.log("DB Connected");
+        try {
+            const library = await require('./services/installPracticeProblems')();
+            console.log('Practice library', library);
+        } catch { console.error('Practice library installation failed. Retry from the admin video manager.'); }
 
         app.listen(process.env.PORT || 5000, '0.0.0.0', ()=>{
             console.log("Server listening at port number: "+ process.env.PORT);

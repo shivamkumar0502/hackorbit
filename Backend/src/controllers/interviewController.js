@@ -20,6 +20,17 @@ function reportFor(session) {
   return { sessionId: session._id, config: session.config, mode: session.mode, status: session.status, totalQuestions: session.questions.length, answeredCount: answers.length, evaluatedCount: evaluated.length,
     scores: { technical: score('technical'), clarity: score('clarity'), problemSolving: score('problemSolving'), overall: evaluated.length ? Math.round((score('technical') + score('clarity') + score('problemSolving')) / 3 * 10) / 10 : null },
     questions: session.questions.map((question, index) => ({ ...question.toObject?.() || question, response: answers.find(item => item.index === index) || null })),
+    learningPlan: {
+      strengths: [...new Set(evaluated.flatMap(item => item.feedback.strengths || []))].slice(0, 6),
+      reviewPriorities: [...new Set(answers.flatMap(item => item.feedback?.improvements || []))].slice(0, 8),
+      nextSteps: [
+        ...(answers.length < session.questions.length ? [`Revisit the ${session.questions.length - answers.length} unanswered question(s) and write an approach before retrying.`] : []),
+        ...(evaluated.length && score('technical') < 7 ? ['Review the core concepts used in your answers, then solve two related roadmap problems.'] : []),
+        ...(evaluated.length && score('clarity') < 7 ? ['Practice a two-minute explanation: assumptions, approach, trade-offs and a concrete example.'] : []),
+        ...(evaluated.length && score('problemSolving') < 7 ? ['Trace a small example and compare an alternative approach before choosing your solution.'] : []),
+        'Use the review points below to pick one focused improvement for your next mock round.',
+      ],
+    },
     notice: evaluated.length ? 'Practice feedback is based only on the answers evaluated by AI, not an official company assessment.' : 'AI evaluation is unavailable. Review your answers against the checklists; no score has been invented.',
   };
 }

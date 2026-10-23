@@ -149,6 +149,7 @@
 //                 >
 //                   <option value="array">Array</option>
 //                   <option value="linkedList">Linked List</option>
+{["string","hash","twoPointers","slidingWindow","prefix","binarySearch","sorting","stack","queue","tree","bst","dsu","greedy","heap","bit","math","backtracking"].map(t=><option key={t} value={t}>{t}</option>)}
 //                   <option value="graph">Graph</option>
 //                   <option value="dp">DP</option>
 //                 </select>
@@ -312,7 +313,7 @@ const problemSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   difficulty: z.enum(["easy", "medium", "hard"]),
-  tags: z.enum(["array", "linkedList", "graph", "dp"]),
+  tags: z.enum(["array","linkedList","graph","dp","string","hash","twoPointers","slidingWindow","prefix","binarySearch","sorting","stack","queue","tree","bst","dsu","greedy","heap","bit","math","backtracking"]),
 
   visibleTestCases: z.array(
     z.object({
@@ -456,6 +457,7 @@ className="w-full p-3 rounded bg-[#16181d] border border-[#2a2d34]"
 
 <option value="array">Array</option>
 <option value="linkedList">Linked List</option>
+{["string","hash","twoPointers","slidingWindow","prefix","binarySearch","sorting","stack","queue","tree","bst","dsu","greedy","heap","bit","math","backtracking"].map(t=><option key={t} value={t}>{t}</option>)}
 <option value="graph">Graph</option>
 <option value="dp">Dynamic Programming</option>
 

@@ -159,13 +159,13 @@ const getProblemById = async(req,res)=>{
 
     const getProblem = await Problem.findById(id).select(
   "_id title description difficulty tags visibleTestCases startCode referenceSolution"
-);
+).lean();
 
    // video ka jo bhi url wagera le aao
    
    if(!getProblem)
     return res.status(404).send("Problem is Missing");
-    const videos = await solutionVideo.find({problemId:id});
+    const videos = await solutionVideo.findOne({problemId:id}).sort({createdAt:-1});
 
     if(videos){
       getProblem.secureUrl=videos.secureUrl;
