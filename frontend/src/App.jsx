@@ -27,13 +27,16 @@ import Roadmap from './pages/Roadmap';
 import Revision from './pages/Revision';
 import Peer from './pages/Peer';
 import Events from './pages/Events';
+import Compiler from './pages/Compiler';
+import PracticePlan from './pages/PracticePlan';
+import CompanySheets from './pages/CompanySheets';
 
 function App(){
   
   const dispatch = useDispatch();
   const location = useLocation();
   const from = location.state?.from;
-  const loginDestination = typeof from === 'string' && (/^\/(dashboard|contest|learn|roadmap|revision|peer|events)$/.test(from) || /^\/peer\/[a-f0-9]{32}$/.test(from) || /^\/events\/[a-f0-9]{24}$/.test(from)) ? from : '/home';
+  const loginDestination = typeof from === 'string' && (/^\/(dashboard|contest|learn|roadmap|revision|peer|events|compiler|plan|sheets)$/.test(from) || /^\/peer\/[a-f0-9]{32}$/.test(from) || /^\/events\/[a-f0-9]{24}$/.test(from)) ? from : '/home';
   const {isAuthenticated,user,initialized} = useSelector((state)=>state.auth);
 
   // check initial authentication
@@ -58,6 +61,9 @@ function App(){
 <Route path="/dashboard" element={<Dashboard />} />
 <Route path="/contest" element={<Contest />} />
 <Route path="/learn" element={<Learn />} />
+<Route path="/compiler" element={<Compiler />} />
+<Route path="/plan" element={<PracticePlan />} />
+<Route path="/sheets" element={<CompanySheets />} />
 <Route path="/roadmap" element={<Roadmap />} />
 <Route path="/revision" element={<Revision />} />
 <Route path="/peer" element={<Peer />} />

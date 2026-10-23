@@ -43,11 +43,14 @@ test('learning, private peer rooms and scheduled contest HTTP lifecycle',async()
   const saved=await request(link,{code:'console.log(1)',version:started.data.version,language:'javascript'},guest,'PATCH');assert.equal(saved.status,200);
   assert.equal((await request(link,{code:'stale',version:started.data.version,language:'javascript'},guest,'PATCH')).status,409);
   assert.equal((await request(link)).data.code,'console.log(1)');
+  assert.equal((await request(`${link}/replay`,undefined,other)).status,404);
+  const replay=(await request(`${link}/replay`,undefined,guest)).data.history;assert.equal(replay.at(-1).code,'console.log(1)');assert.equal(replay.at(-1).actor,'guest');assert.equal(replay.filter(s=>s.code==='stale').length,0);
   assert.equal((await request(`${link}/control`,{action:'end'})).data.status,'ended');
   assert.equal((await request(link,{code:'late',version:saved.data.version,language:'javascript'},guest,'PATCH')).status,409);
   assert.equal((await request(`${link}/control`,{action:'review',review:'Good approach; test empty arrays.'})).status,200);
   assert.match((await request(link,undefined,guest)).data.review,/empty arrays/);
   const second=await request('/peer',{problemId:p2,minutes:45});tables.Peer.find(r=>r.invite===second.data.invite).expiresAt=new Date(Date.now()-1);assert.equal((await request(`/peer/${second.data.invite}/join`,{},guest)).status,409);
+  const historyRoom=await request('/peer',{problemId:p1});const historyPath=`/peer/${historyRoom.data.invite}`;let version=historyRoom.data.version;for(let i=0;i<122;i++){const r=await request(historyPath,{code:`// version ${i}`,language:'javascript',version},host,'PATCH');assert.equal(r.status,200);version=r.data.version;}const bounded=(await request(`${historyPath}/replay`)).data.history;assert.equal(bounded.length,120);assert.equal(bounded.at(-1).code,'// version 121');
   assert.equal((await request('/events',{title:'Denied'})).status,403);
   const config={title:'Weekly practice',startsAt:new Date(Date.now()+3600000).toISOString(),minutes:60,problemIds:[p1,p2]};
   assert.equal((await request('/events',{...config,problemIds:[p1,p1]},host,'POST',true)).status,400);

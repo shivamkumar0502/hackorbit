@@ -3,6 +3,7 @@ const {Schema} = mongoose;
 
 const problemSchema = new Schema({
     seedKey: { type: String, unique: true, sparse: true },
+    hints: { type: [String], default: [] },
     companies: { type: [String], default: [] },
     title:{
         type:String,
@@ -19,7 +20,7 @@ const problemSchema = new Schema({
     },
     tags:{
         type:String,
-        enum:['array','linkedList','graph','dp'],
+        enum:require('../utils/practiceGrowth').topics,
         required:true
     },
     visibleTestCases:[

@@ -5,11 +5,11 @@ function matches(doc,query){return Object.entries(query).every(([key,value])=>{
  if(key==='$or')return value.some(item=>matches(doc,item));
  const actual=doc[key];
  if(value===null)return actual===null||actual===undefined;
- if(value&&typeof value==='object'&&!(value instanceof Date))return Object.entries(value).every(([op,want])=>({$in:()=>want.some(v=>equal(actual,v)),$ne:()=>!equal(actual,want),$gte:()=>actual>=want,$lte:()=>actual<=want,$gt:()=>actual>want}[op]?.()??false));
+ if(value&&typeof value==='object'&&!(value instanceof Date))return Object.entries(value).every(([op,want])=>({$in:()=>want.some(v=>equal(actual,v)),$ne:()=>!equal(actual,want),$gte:()=>actual>=want,$lte:()=>actual<=want,$lt:()=>actual<want,$gt:()=>actual>want}[op]?.()??false));
  return equal(actual,value);
 });}
 function createModels(){
- const tables={Daily:[],Revision:[],Progress:[],Peer:[],Event:[],Entry:[],Problem:[],Submission:[]};
+ const tables={Daily:[],Revision:[],Progress:[],Peer:[],Event:[],Entry:[],Problem:[],Submission:[],Discussion:[]};
  class Query{
   constructor(run){this.run=run;this.sortBy=null;this.max=Infinity;this.field=null;}
   select(){return this;}sort(value){this.sortBy=value;return this;}limit(value){this.max=value;return this;}populate(field){this.field=field;return this;}
@@ -21,8 +21,8 @@ function createModels(){
  const models={};
  for(const name of Object.keys(tables)){
   const data=tables[name],keys={Daily:['day'],Revision:['userId','problemId'],Progress:['userId'],Peer:['invite'],Entry:['eventId','userId']}[name];
-  const fresh=values=>({_id:(++seq).toString(16).padStart(24,'0'),createdAt:new Date(),...(name==='Peer'?{guest:null,guestName:'',version:0,status:'waiting',editor:'host',language:'javascript',review:''}:{}),...(name==='Progress'?{readUnits:[]}:{}),...copy(values)});
-  function update(doc,ops){Object.assign(doc,copy(ops.$set||{}));for(const [key,value]of Object.entries(ops.$inc||{}))doc[key]=(doc[key]||0)+value;for(const [key,value]of Object.entries(ops.$addToSet||{}))doc[key]=[...new Set([...(doc[key]||[]),value])];for(const [key,value]of Object.entries(ops.$pull||{}))doc[key]=(doc[key]||[]).filter(v=>v!==value);}
+  const fresh=values=>({_id:(++seq).toString(16).padStart(24,'0'),createdAt:new Date(),...(name==='Peer'?{guest:null,guestName:'',version:0,status:'waiting',editor:'host',language:'javascript',review:''}:{}),...(name==='Discussion'?{removed:false,spoiler:false,parent:null,updatedAt:new Date()}:{}),...(name==='Progress'?{readUnits:[]}:{}),...copy(values)});
+  function update(doc,ops){for(const [key,value]of Object.entries(ops.$push||{})){const arr=[...(doc[key]||[]),...copy(value.$each||[value])];doc[key]=value.$slice?arr.slice(value.$slice):arr;}Object.assign(doc,copy(ops.$set||{}));for(const [key,value]of Object.entries(ops.$inc||{}))doc[key]=(doc[key]||0)+value;for(const [key,value]of Object.entries(ops.$addToSet||{}))doc[key]=[...new Set([...(doc[key]||[]),value])];for(const [key,value]of Object.entries(ops.$pull||{}))doc[key]=(doc[key]||[]).filter(v=>v!==value);}
   models[name]={
    find:q=>new Query(()=>data.filter(d=>matches(d,q||{}))),findOne:q=>new Query(()=>data.find(d=>matches(d,q))||null),findById:id=>new Query(()=>data.find(d=>equal(d._id,id))||null),
    exists:async q=>Boolean(data.find(d=>matches(d,q))),countDocuments:async q=>data.filter(d=>matches(d,q)).length,
