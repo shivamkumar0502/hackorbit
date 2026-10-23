@@ -9,9 +9,13 @@ import SubmissionHistory from '../components/SubmissionHistory';
 import ChatAi from '../components/ChatAi';
 import RevisionEditor from '../components/RevisionEditor';
 import Editorial from '../components/Editorial';
+import ProblemSolutions from '../components/ProblemSolutions';
 import ProblemHints from '../components/ProblemHints';
 import ProblemDiscussion from '../components/ProblemDiscussion';
 import './ProblemPage.css';
+import CustomTestcases from '../components/CustomTestcases';
+import ProblemReport from '../components/ProblemReport';
+import ContestSignals from '../components/ContestSignals';
 
 const languages = { javascript: 'JavaScript', java: 'Java', cpp: 'C++' };
 const errorText = error => typeof error.response?.data === 'string' ? error.response.data : error.response?.data?.message || error.message;
@@ -23,6 +27,7 @@ export default function ProblemPage() {
   const [problem, setProblem] = useState(null);
   const [language, setLanguage] = useState('javascript');
   const [drafts, setDrafts] = useState({});
+  const [templateNotice,setTemplateNotice]=useState(false);
   const [tab, setTab] = useState('description');
   const [resultTab, setResultTab] = useState('testcases');
   const [caseIndex, setCaseIndex] = useState(0);
@@ -48,7 +53,13 @@ export default function ProblemPage() {
     setTab('description'); setResultTab('testcases');
     try { setDrafts(JSON.parse(localStorage.getItem(storageKey) || '{}') || {}); } catch { setDrafts({}); }
     axiosClient.get(`/problem/problemById/${problemId}`, { signal: controller.signal })
-      .then(response => setProblem(response.data))
+      .then(response => {
+        setProblem(response.data);
+        const version=response.data.codeVersion||1;
+        if(version>=3) {
+          try { const saved=localStorage.getItem(`${storageKey}:v${version}`); setDrafts(saved ? JSON.parse(saved) : {}); setTemplateNotice(!saved && Boolean(localStorage.getItem(storageKey))); } catch { setDrafts({}); }
+        }
+      })
       .catch(err => { if (!controller.signal.aborted) setFetchError(errorText(err)); });
     return () => controller.abort();
   }, [problemId, storageKey, reload]);
@@ -56,7 +67,7 @@ export default function ProblemPage() {
   function changeCode(value) {
     const next = { ...drafts, [language]: value || '' };
     setDrafts(next);
-    try { localStorage.setItem(storageKey, JSON.stringify(next)); } catch { /* Editing remains available without browser storage. */ }
+    try { localStorage.setItem(problem?.codeVersion>=3 ? `${storageKey}:v${problem.codeVersion}` : storageKey, JSON.stringify(next)); } catch { /* Editing remains available without browser storage. */ }
   }
 
   async function execute(mode) {
@@ -96,18 +107,19 @@ export default function ProblemPage() {
         <button className="submit-code" disabled={!!busy || !code.trim()} onClick={() => execute('submit')}><Send size={15} />{busy === 'submit' ? 'Judging…' : 'Submit'}</button>
       </div>
     </header>
-    <div className="workspace-panels">
+    <ContestSignals problemId={problemId}/><div className="workspace-panels">
       <section className="statement-panel workspace-card">
         <nav className="workspace-tabs" aria-label="Problem information">
-          {['description', 'editorial', 'solutions', 'submissions', 'assistant', 'hints', 'discussion', 'notes'].map(name => <button key={name} aria-pressed={tab === name} className={tab === name ? 'selected' : ''} onClick={() => setTab(name)}>{name}</button>)}
+          {['description', 'editorial', 'solutions', 'submissions', 'assistant', 'hints', 'discussion', 'notes', 'report'].map(name => <button key={name} aria-pressed={tab === name} className={tab === name ? 'selected' : ''} onClick={() => setTab(name)}>{name}</button>)}
         </nav>
         <div className="statement-content">
-          {tab === 'description' && <><h1>{problem.title}</h1><div className="problem-meta"><span className={`difficulty ${problem.difficulty?.toLowerCase()}`}>{problem.difficulty}</span>{(Array.isArray(problem.tags) ? problem.tags : [problem.tags]).filter(Boolean).map(tag => <span key={tag}>{tag}</span>)}</div><div className="problem-description">{problem.description}</div>{cases.map((item, i) => <article className="example" key={i}><h3>Example {i + 1}</h3><div><p><b>Input: </b><code>{item.input}</code></p><p><b>Output: </b><code>{item.output}</code></p>{item.explanation && <p><b>Explanation: </b>{item.explanation}</p>}</div></article>)}</>}
+          {tab === 'description' && <><h1>{problem.title}</h1><div className="problem-meta"><span className={`difficulty ${problem.difficulty?.toLowerCase()}`}>{problem.difficulty}</span>{(Array.isArray(problem.tags) ? problem.tags : [problem.tags]).filter(Boolean).map(tag => <span key={tag}>{tag}</span>)}</div><div className="problem-description">{problem.functionDescription||problem.description}</div>{problem.functionMode&&<div className="solution-contract"><b>Function to implement: {problem.methodName}</b><p>Write only the Solution class. Return the result; input/output is handled for you.</p><code>{problem.functionSignature}</code></div>}{cases.map((item, i) => <article className="example" key={i}><h3>Example {i + 1}</h3><div><p><b>Input: </b><code>{item.displayInput||item.input}</code></p><p><b>Output: </b><code>{item.output}</code></p>{item.explanation && <p><b>Explanation: </b>{item.explanation}</p>}</div></article>)}</>}
           {tab === 'editorial' && <Editorial secureUrl={problem.secureUrl} thumbnailUrl={problem.thumbnailUrl} duration={problem.duration} />}
-          {tab === 'solutions' && (problem.referenceSolution?.length ? problem.referenceSolution.map((solution, i) => <article key={i}><h3>{solution.language}</h3><pre>{solution.completeCode}</pre></article>) : <p>No solutions published yet.</p>)}
+          {tab === 'solutions' && <ProblemSolutions key={problemId} problem={problem}/>}
           {tab === 'submissions' && <SubmissionHistory key={historyVersion} problemId={problemId} />}
           {tab === 'hints' && <ProblemHints key={problemId} problemId={problemId}/>}
           {tab === 'discussion' && <ProblemDiscussion key={problemId} problemId={problemId}/>}
+          {tab === 'report' && <ProblemReport problemId={problemId}/>}
           {tab === 'notes' && <RevisionEditor key={problemId} problemId={problemId} />}
           {tab === 'assistant' && <ChatAi key={problemId} problem={problem} editorCode={code} />}
         </div>
@@ -116,12 +128,12 @@ export default function ProblemPage() {
         <section className="editor-panel workspace-card">
           <div className="editor-title"><span><Code2 size={16} /> Code</span><span className="draft-label">Local draft</span></div>
           <div className="editor-toolbar"><select aria-label="Programming language" value={language} disabled={!!busy} onChange={event => setLanguage(event.target.value)}>{Object.entries(languages).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><button title="Reset current language to starter code" aria-label="Reset current language to starter code" onClick={() => { if (window.confirm('Replace this language draft with starter code?')) changeCode(starter(problem, language)); }}><RotateCcw size={15} /></button></div>
-          <div className="monaco-container"><Editor path={`${problemId}/${language}`} language={language} value={code} onChange={changeCode} theme="vs-dark" options={{ minimap: { enabled: false }, fontSize: 14, padding: { top: 18 }, scrollBeyondLastLine: false, automaticLayout: true, readOnly: !!busy }} /></div>
+          <>{templateNotice&&<div className="template-notice">New function templates are ready. Your previous drafts are preserved. <button onClick={()=>{try{const previous=JSON.parse(localStorage.getItem(storageKey)||'{}');setDrafts(previous);}catch{/* Keep the new template. */}setTemplateNotice(false);}}>Restore previous drafts</button></div>}</><div className="monaco-container"><Editor path={`${problemId}/v${problem.codeVersion||1}/${language}`} language={language} value={code} onChange={changeCode} theme="vs-dark" options={{ minimap: { enabled: false }, fontSize: 14, padding: { top: 18 }, scrollBeyondLastLine: false, automaticLayout: true, readOnly: !!busy }} /></div>
         </section>
         <section className="test-panel workspace-card">
-          <nav className="workspace-tabs" aria-label="Execution panel"><button className={resultTab === 'testcases' ? 'selected' : ''} onClick={() => setResultTab('testcases')}>Testcases</button><button className={resultTab === 'result' ? 'selected' : ''} onClick={() => setResultTab('result')}>Test Result</button></nav>
+          <nav className="workspace-tabs" aria-label="Execution panel"><button className={resultTab==='custom'?<CustomTestcases key={problemId} problem={problem} code={code} language={language}/>:resultTab === 'testcases' ? 'selected' : ''} onClick={() => setResultTab('testcases')}>Testcases</button><button className={resultTab === 'custom' ? 'selected' : ''} onClick={() => setResultTab('custom')}>Custom input</button><button className={resultTab === 'result' ? 'selected' : ''} onClick={() => setResultTab('result')}>Test Result</button></nav>
           <div className="test-content" aria-live="polite">
-            {resultTab === 'testcases' ? <><div className="case-tabs">{cases.map((_, i) => <button key={i} className={caseIndex === i ? 'selected' : ''} onClick={() => setCaseIndex(i)}>Case {i + 1}</button>)}</div>{example ? <><label>Input</label><pre>{example.input}</pre><label>Expected output</label><pre>{example.output}</pre></> : <p>No sample testcases available.</p>}</> : busy ? <p>Executing code. Please wait…</p> : error ? <p role="alert" className="verdict failed">{error}</p> : !result ? <p>Run your code to see the test results here.</p> : <><h2 className={`verdict ${accepted ? 'passed' : 'failed'}`}>{accepted ? (result.mode === 'submit' ? 'Accepted' : 'All sample tests passed') : result.status === 'error' ? 'Execution Error' : 'Tests failed'}</h2><p>Runtime: {result.runtime ?? '—'} sec · Memory: {result.memory ?? '—'} KB</p>{result.mode === 'submit' && <p>{result.passedTestCases} / {result.totalTestCases} testcases passed</p>}{result.errorMessage && <pre>{result.errorMessage}</pre>}{result.testCases && <><div className="case-tabs">{result.testCases.map((item, i) => <button key={i} className={caseIndex === i ? 'selected' : ''} onClick={() => setCaseIndex(i)}><span className={Number(item.status_id ?? item.status?.id) === 3 ? 'passed' : 'failed'}>●</span> Case {i + 1}</button>)}</div>{test && <><p>{test.status?.description || (Number(test.status_id) === 3 ? 'Accepted' : 'Failed')}</p><label>Input</label><pre>{cases[caseIndex]?.input ?? test.stdin}</pre><label>Output</label><pre>{test.stdout ?? '(no output)'}</pre><label>Expected output</label><pre>{cases[caseIndex]?.output}</pre>{(test.stderr || test.compile_output) && <pre className="failed">{test.stderr || test.compile_output}</pre>}</>}</>}</>}
+            {resultTab==='custom'?<CustomTestcases key={problemId} problem={problem} code={code} language={language}/>:resultTab === 'testcases' ? <><div className="case-tabs">{cases.map((_, i) => <button key={i} className={caseIndex === i ? 'selected' : ''} onClick={() => setCaseIndex(i)}>Case {i + 1}</button>)}</div>{example ? <><label>Input</label><pre>{example.displayInput||example.input}</pre><label>Expected output</label><pre>{example.output}</pre></> : <p>No sample testcases available.</p>}</> : busy ? <p>Executing code. Please wait…</p> : error ? <p role="alert" className="verdict failed">{error}</p> : !result ? <p>Run your code to see the test results here.</p> : <><h2 className={`verdict ${accepted ? 'passed' : 'failed'}`}>{accepted ? (result.mode === 'submit' ? 'Accepted' : 'All sample tests passed') : result.status === 'error' ? 'Execution Error' : 'Tests failed'}</h2><p>Runtime: {result.runtime ?? '—'} sec · Memory: {result.memory ?? '—'} KB</p>{result.mode === 'submit' && <p>{result.passedTestCases} / {result.totalTestCases} testcases passed</p>}{result.errorMessage && <pre>{result.errorMessage}</pre>}{result.testCases && <><div className="case-tabs">{result.testCases.map((item, i) => <button key={i} className={caseIndex === i ? 'selected' : ''} onClick={() => setCaseIndex(i)}><span className={Number(item.status_id ?? item.status?.id) === 3 ? 'passed' : 'failed'}>●</span> Case {i + 1}</button>)}</div>{test && <><p>{test.status?.description || (Number(test.status_id) === 3 ? 'Accepted' : 'Failed')}</p><label>Input</label><pre>{cases[caseIndex]?.displayInput||cases[caseIndex]?.input||test.stdin}</pre><label>Output</label><pre>{test.stdout ?? '(no output)'}</pre><label>Expected output</label><pre>{cases[caseIndex]?.output}</pre>{(test.stderr || test.compile_output) && <pre className="failed">{test.stderr || test.compile_output}</pre>}</>}</>}</>}
           </div>
         </section>
       </div>

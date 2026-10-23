@@ -1,3 +1,4 @@
+import {Analytics,PublicProfileSettings,PublicProfile,QualityPanel,IntegrityReview} from './pages/ProgressTools';
 
 import {Routes, Route ,Navigate, useLocation} from "react-router";
 import Login from "./pages/Login";
@@ -53,6 +54,11 @@ function App(){
   return(
   <>
     <Routes>
+<Route path="/analytics" element={<Analytics/>}/>
+<Route path="/profile/share" element={<PublicProfileSettings/>}/>
+<Route path="/u/:slug" element={<PublicProfile/>}/>
+<Route path="/admin/quality" element={<QualityPanel/>}/>
+<Route path="/events/:eventId/review" element={<IntegrityReview/>}/>
 
 {/* Landing Page */}
 

@@ -65,3 +65,18 @@ Problem workspaces now have progressive authored hints, member discussion thread
 Peer rooms record the latest 120 successful saved-code versions and control events atomically with editor version checks. Replay is only available to the two room participants. It is a saved-code timeline, not an audio/video recording; old rooms have no historical snapshots until a new version is saved. Room records retain the existing expiry/TTL policy.
 
 `expanded-problems-v2` installs 50 additional original exercises over 21 topics after MongoDB connects, once an administrator exists. Each contains two examples, two hidden edge cases, language starters and a JavaScript reference solution. The original eight-problem migration stays separate, so upgrading does not restore an administrator's earlier deletions. Existing documents are never overwritten; explicit admin restore still inserts missing seeds. The backend tests validate all 50 schemas and execute all 200 expanded reference test cases. Company sheets are preparation suggestions, not verified company question histories.
+
+### Practice and review tools
+
+- `/analytics`: user-scoped submission metrics (latest 10,000 submissions), with per-problem/language performance history.
+- Problem workspace → Custom input: standalone sandboxed testcase execution; does not create a submission or affect scores. Function problems accept the original token format through their existing server driver.
+- `/revision`: wrong submissions automatically schedule a private one-day review. Remembered reviews advance through 1/3/7/14-day intervals; forgotten reviews restart at one day. No external notifications are sent.
+- `/profile/share`: opt-in public profile settings. `/u/:handle` exposes only explicitly published display fields and aggregate learning progress. Email, code, notes and interview sessions remain private.
+- `/admin/quality`: static test/starter/solution configuration checks and issue-report triage. A clean static scan is not a guarantee that an algorithm or testcase is correct.
+- Scheduled contest pages link to admin integrity review. Tab-hidden and code-paste events are only collected from contest problem links, during the event window. Clipboard contents are never sent. Structural similarity ignores comments/identifier spelling and excludes short snippets. Signals do not automatically change scores or disqualify users.
+
+### Peer audio/video
+
+Room members can explicitly start/join a WebRTC video call, mute audio, disable the camera, and share a screen. The host initiates negotiation. SDP/ICE messages are scoped to the room's host/candidate and expire after ten minutes; media is not recorded by the application. Closing/leaving the call or ending the interview stops local media tracks.
+
+The default uses public STUN for direct connectivity. Restricted networks require a TURN relay; optionally configure `TURN_URL`, `TURN_USERNAME` and `TURN_CREDENTIAL` in the service environment. Relay credentials are supplied only to authenticated room participants. Do not put production credentials in this repository. Verify two-device audio, video and screen sharing on the intended networks before relying on it for an interview.

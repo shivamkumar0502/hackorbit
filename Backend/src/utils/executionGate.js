@@ -1,0 +1,2 @@
+const usage=new Map();
+module.exports=function executionGate(user,now=Date.now()){const key=String(user);let row=usage.get(key);if(!row||now-row.start>=60000){if(row?.busy)return null;row={start:now,count:0,busy:false};usage.set(key,row);}if(row.busy||row.count>=12)return null;row.count++;row.busy=true;if(usage.size>10000)for(const [k,v]of usage)if(!v.busy&&now-v.start>60000)usage.delete(k);return()=>{row.busy=false;};};
