@@ -1,0 +1,137 @@
+/* Shared reading scale and responsive layout, loaded after page styles. */
+.hub-page,.profile-page,.landing-page,.auth-page{font-size:16px;line-height:1.65}
+.hub-eyebrow,.home-eyebrow,.auth-eyebrow{font-size:14px;letter-spacing:1.5px}
+.hub-footer,.orbit-footer{font-size:16px}
+.hub-page small,.profile-page small,.orbit-footer small{font-size:14px}
+.workspace-panel h2,.visualizer-config h2,.visualizer-stage-heading h2,.visualizer-code h3,.interview-plan h2,.profile-progress h2{font-size:21px;line-height:1.4}
+.workspace-panel p,.workspace-heading p,.visualizer-heading p,.learning-grid p,.home-feature p{font-size:16px;line-height:1.75}
+.hub-page input,.hub-page select,.hub-page textarea,.auth-panel input,.orbit-feedback input,.orbit-feedback select,.orbit-feedback textarea{font-size:16px;max-width:100%}
+.hub-button,.home-primary,.home-secondary,.auth-submit,.event-tabs a{font-size:16px;min-height:46px}
+.hub-nav-links>a,.hub-account summary,.hub-account>div a,.hub-account>div button{min-height:44px;display:flex;align-items:center}
+.hub-nav-links>a{font-size:16px}
+.hub-nav .hub-button{min-height:44px}
+.hub-nav{width:100%;max-width:1380px}
+.hub-nav-links{flex:1}
+.hub-account{flex-shrink:0}
+.hub-page :is(.workspace-panel,.learning-grid>*,.peer-layout>*,.dashboard-columns>*,.visualizer-main,.visualizer-config,.visualizer-stage),.profile-layout>*{min-width:0}
+.workspace-heading h1,.visualizer-heading h1{font-size:clamp(28px,3vw,36px);line-height:1.25;overflow-wrap:anywhere}
+.workspace-actions b{font-size:18px;line-height:1.5}
+.workspace-actions span,.workspace-stats span,.workspace-list small,.contest-start label,.contest-clock span{font-size:15px}
+.workspace-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.workspace-stats strong{font-size:clamp(27px,3vw,36px);line-height:1.3;overflow-wrap:anywhere}
+.event-tabs{flex-wrap:wrap}
+.event-table-wrap{max-width:100%;overscroll-behavior-x:contain}
+.event-table{font-size:16px}
+.event-table th{font-weight:600}
+.learning-actions select,.contest-start select,.visualizer-controls select{min-height:44px;background:#25252b;border:1px solid #4c4c58;border-radius:8px;color:#eee;padding:9px 12px}
+.learning-actions label{min-width:0}
+.learning-actions select{max-width:100%}
+.peer-results,.revision-preview{font-size:16px;line-height:1.7;overflow-wrap:anywhere}
+.peer-review,.discussion-post{overflow-wrap:anywhere}
+.visualizer-layout{grid-template-columns:310px minmax(0,1fr)}
+.visualizer-config label{font-size:16px}
+.visualizer-config small,.visualizer-note,.visualizer-legend{font-size:14px;color:#afb0c2}
+.visualizer-complexity{flex-wrap:wrap}
+.visualizer-stage-heading{flex-wrap:wrap}
+.visualizer-stage-heading>span,.visualizer-metrics,.frontier-panel{font-size:15px}
+.array-stage{justify-content:flex-start;gap:12px;overscroll-behavior-x:contain}
+.array-column{flex:1 0 42px;min-width:42px;max-width:64px}
+.array-value{font-size:16px}
+.array-column small{font-size:14px;color:#a4aac2}
+.visualizer-caption,.visualizer-code ol{font-size:16px;line-height:1.8}
+.visualizer-code li{overflow-wrap:anywhere;white-space:pre-wrap}
+.visualizer-controls button{min-width:44px;min-height:44px;justify-content:center}
+.visualizer-controls button.visualizer-play{font-size:16px}
+.visualizer-controls label{font-size:16px}
+.visualizer-metrics{flex-wrap:wrap;gap:12px 24px}
+.frontier-panel code{overflow-wrap:anywhere;min-width:0}
+.profile-page *{box-sizing:border-box}
+.profile-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.profile-stats .stat-card{min-width:0}
+.profile-stats .stat-card p{font-size:14px}
+.profile-modal input{font:inherit;min-height:46px}
+.activity-heading,.history-card>div,.question-meta{flex-wrap:wrap;gap:12px}
+.interview-setup-layout>*,.room-layout>*{min-width:0}
+.company-choices button{min-width:0;overflow-wrap:anywhere}
+.company-mark{flex-shrink:0}
+.question-navigation,.report-score-breakdown{flex-wrap:wrap}
+.room-progress button{min-height:46px}
+.home-feature h3{font-size:21px;line-height:1.4}
+.home-entry-strip b{font-size:18px}
+.home-code-body pre{font-size:16px;line-height:1.9}
+.auth-password input{padding-right:76px}
+.auth-password button{min-width:44px;min-height:44px;top:1px;right:5px}
+.auth-panel input{min-height:46px}
+.auth-hint,.auth-back{font-size:14px}
+@media(max-width:1100px){
+ .hub-nav{flex-wrap:wrap;gap:12px;border-radius:20px}
+ .hub-nav-links{order:3;flex-basis:100%;width:100%;justify-content:flex-start;overflow-x:auto;padding-bottom:3px}
+ .hub-nav-links>a{flex-shrink:0;font-size:16px;padding:9px 13px}
+ .hub-brand{font-size:22px}
+ .hub-nav>.hub-button,.hub-account{margin-left:auto}
+ .dashboard-columns{grid-template-columns:1fr}
+ .dashboard-columns>.activity-calendar{max-width:440px;width:100%}
+ .visualizer-layout{grid-template-columns:1fr}
+ .visualizer-config{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+ .visualizer-config h2,.visualizer-config small,.visualizer-config .visualizer-note{grid-column:1/-1;width:100%;margin:0}
+ .visualizer-config label{min-width:0;margin:0}
+ .visualizer-config>.hub-button{width:100%;margin:0;font-size:16px!important}
+ .visualizer-complexity{margin:0;padding:0;border:0}
+ .profile-layout{grid-template-columns:1fr}
+ .home-hero{grid-template-columns:1fr;gap:32px;padding-top:50px}
+ .home-demo{max-width:680px;width:100%}
+}
+@media(max-width:768px){
+ .hub-page,.profile-page{padding:18px 16px 36px}
+ .workspace-heading{margin:24px 0}
+ .workspace-panel{padding:22px;margin:20px 0}
+ .learning-grid,.interview-plan{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hub-page .workspace-actions{grid-template-columns:1fr}
+ .daily-card{flex-direction:column;align-items:flex-start}
+ .daily-streak{text-align:left;min-width:0}
+ .peer-layout,.learning-form-grid{grid-template-columns:1fr}
+ .interview-setup-layout,.room-layout{grid-template-columns:1fr}
+ .contest-launch{flex-wrap:wrap}
+ .contest-start{flex-wrap:wrap;flex-shrink:1;max-width:100%}
+ .workspace-list li{flex-wrap:wrap}
+ .profile-stats .stat-card{flex-direction:column;align-items:flex-start;padding:18px 12px;gap:10px}
+ .home-entry-strip{grid-template-columns:1fr}
+ .home-entry-strip>a+a{border-left:0;border-top:1px solid #37373d}
+ .home-section-heading{display:block}
+ .home-section-heading>p{max-width:none;margin-top:14px}
+}
+@media(max-width:540px){
+ .hub-page,.profile-page{padding-left:12px;padding-right:12px}
+ .hub-nav{padding:10px 12px}
+ .hub-nav-links>a{padding:9px 11px}
+ .learning-grid,.interview-plan,.visualizer-config{grid-template-columns:1fr}
+ .company-choices,.config-fields,.history-grid,.report-summary{grid-template-columns:1fr}
+ .interview-config,.question-card,.answer-card,.report-answer{padding:18px}
+ .coding-workspace .workspace-header{height:auto;min-height:64px;padding:10px 12px}
+ .coding-workspace .workspace-actions{display:flex;flex-wrap:wrap;margin-left:0}
+ .coding-workspace .workspace-actions button{min-height:44px}
+ .workspace-stats,.profile-stats{grid-template-columns:1fr;gap:12px}
+ .workspace-stats section{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px}
+ .workspace-stats strong{margin:0;font-size:28px}
+ .profile-stats .stat-card{flex-direction:row;align-items:center;gap:16px;padding:20px}
+ .workspace-panel,.visualizer-stage,.visualizer-config{padding:18px}
+ .workspace-actions>a{padding:18px}
+ .contest-start{width:100%;align-items:stretch;flex-direction:column}
+ .contest-start select,.contest-start .hub-button{width:100%}
+ .contest-problem-actions{flex-wrap:wrap;flex-shrink:1}
+ .event-tabs{gap:8px}
+ .event-tabs a{flex:1;text-align:center;white-space:nowrap}
+ .visualizer-controls{gap:10px;padding:12px}
+ .visualizer-controls label{flex-basis:100%;justify-content:center;margin:0}
+ .visualizer-stage-heading h2{font-size:20px}
+ .visualizer-legend{gap:10px}
+ .graph-canvas{height:auto;aspect-ratio:460/360}
+ .home-content{padding:0 16px}
+ .home-feature-grid{grid-template-columns:1fr}
+ .home-code-body{padding:18px 14px}
+ .home-code-window>header{flex-wrap:wrap}
+ .home-bottom-cta{padding:24px}
+ .auth-page{padding:24px 12px 40px}
+ .auth-panel{padding:24px 20px}
+ .orbit-footer{padding:28px 16px}
+}
