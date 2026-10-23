@@ -150,6 +150,12 @@ function formattedInput(s,input){
  return s.params.map(([,name])=>name+' = '+JSON.stringify(values[name])).join('\n');
 }
 const byKey=new Map(contracts.map(s=>[s.key,s]));
+function describeFunction(method,legacy) {
+ const spec=contracts.find(s=>methodName(s.key)===method), statement=spec&&require('./functionStatements')[spec.key];
+ if(!statement)return legacy;
+ const text=legacy.split('\n\nInput tokens')[0], constraints=text.match(/(?:[01] <=|Length <=|Each length <=)[\s\S]*/);
+ return statement+(constraints?'\n\nConstraints:\n'+constraints[0]:'');
+}
 function enhance(problem){
  const key=problem.seedKey.replace('expanded-v2-',''),s=byKey.get(key);
  if(!s||!javascript[key])throw Error('Missing function contract: '+key);
@@ -164,4 +170,4 @@ function enhance(problem){
  });
  return {...problem,visibleTestCases:problem.visibleTestCases.map(test=>({...test,displayInput:formattedInput(s,test.input)})),codeVersion:3,functionMode:true,driverCode:drivers,functionSignature:s.params.map(([type,name])=>`${name}: ${javaTypes[type]}`).join(', '),functionReturn:javaTypes[s.ret],methodName:methodName(key),solutionSteps:key==='inversions'?['JavaScript counts cross-half inversions during merge sort. C++ and Java compress values to ranks and use a Fenwick tree.','Scan right to left and query counts of strictly smaller ranks; duplicates must not count as inversions.','Accumulate the pair count in a 64-bit integer (or JavaScript Number within the stated bounds).']:problem.hints,referenceSolution,startCode:Object.entries(labels).map(([language,label])=>({language:label,initialCode:empty(s,language)}))};
 }
-module.exports={enhance,contracts,driver,snippet,formatExample:(method,input)=>{const spec=contracts.find(s=>methodName(s.key)===method);return spec?formattedInput(spec,input):input;}};
+module.exports={enhance,contracts,driver,snippet,describeFunction,formatExample:(method,input)=>{const spec=contracts.find(s=>methodName(s.key)===method);return spec?formattedInput(spec,input):input;}};

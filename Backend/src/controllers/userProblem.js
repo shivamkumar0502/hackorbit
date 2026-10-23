@@ -166,7 +166,8 @@ const getProblemById = async(req,res)=>{
    if(!getProblem)
     return res.status(404).send("Problem is Missing");
     if(getProblem.functionMode) {
-      const {formatExample}=require('../data/functionPrograms');
+      const {formatExample,describeFunction}=require('../data/functionPrograms');
+      getProblem.functionDescription=describeFunction(getProblem.methodName,getProblem.description);
       getProblem.visibleTestCases=getProblem.visibleTestCases.map(test=>({...test,displayInput:formatExample(getProblem.methodName,test.input)}));
     }
     const videos = await solutionVideo.findOne({problemId:id}).sort({createdAt:-1});
