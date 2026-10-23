@@ -20,7 +20,7 @@ export default function ProblemSolutions({problem}) {
    <div className="solution-language-tabs" role="tablist" aria-label="Solution language">{solutions.map(row=><button key={row.language} role="tab" aria-selected={row.language===solution.language} aria-controls="official-solution-code" onClick={()=>{setSelected(row.language);setCopied(false);setCopyError('');}}>{row.language}</button>)}</div>
    <div className="solution-code-actions"><span>{solution.language} · Reference implementation</span><button onClick={copy}>{copied?<Check size={15}/>:<Copy size={15}/>} {copied?'Copied':'Copy'}</button></div>
    {copyError&&<p role="alert">{copyError}</p>}
-   <div id="official-solution-code" role="tabpanel" aria-label={`${solution.language} solution`}><SyntaxHighlighter language={editorLanguage(solution.language)} style={oneDark} showLineNumbers wrapLongLines={false} customStyle={{margin:0,padding:'18px 16px 24px',background:'#202020',fontSize:13,lineHeight:1.8,borderRadius:0}} codeTagProps={{style:{fontFamily:'ui-monospace, SFMono-Regular, Consolas, monospace'}}}>{code}</SyntaxHighlighter></div>
+   <div id="official-solution-code" role="tabpanel" aria-label={`${solution.language} solution`}><SyntaxHighlighter language={editorLanguage(solution.language)} style={oneDark} showLineNumbers wrapLongLines={false} customStyle={{margin:0,padding:'18px 16px 24px',background:'#202020',fontSize:16,lineHeight:1.8,borderRadius:0}} codeTagProps={{style:{fontFamily:'ui-monospace, SFMono-Regular, Consolas, monospace'}}}>{code}</SyntaxHighlighter></div>
   </section>
  </article>;
 }

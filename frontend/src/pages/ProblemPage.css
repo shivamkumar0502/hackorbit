@@ -6,3 +6,26 @@
 
 .solution-guide{color:#c5c6cd}.solution-heading{display:flex;align-items:center;gap:8px;color:#bc99fb;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px}.solution-guide h2{font-size:16px;color:#ededf2;margin:24px 0 12px;font-weight:600}.solution-guide ol{padding-left:23px;list-style:decimal}.solution-guide li{padding-left:4px;margin:14px 0;line-height:1.9}.solution-contract{margin:22px 0;padding:15px 17px;border:1px solid #3e3e48;border-radius:10px;background:#24242a;font-size:13px}.solution-contract p{margin:8px 0}.solution-contract code{background:#303039;border-radius:4px;padding:2px 5px;color:#dbc8ff}.solution-contract small{display:block;margin-top:9px;color:#92929f}.solution-complexity{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0}.solution-complexity span{border-radius:8px;padding:9px 13px;font:12px/1.6 ui-monospace,monospace}.solution-complexity b{margin-right:9px;letter-spacing:.06em}.solution-time{border:1px solid #4c3d73;background:#292438;color:#bba8f8}.solution-space{border:1px solid #285c4c;background:#20352c;color:#8adcb8}.solution-code-card{border:1px solid #3b3b42;border-radius:12px;overflow:hidden;margin-top:20px}.solution-language-tabs{display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid #3b3b42;background:#28282b;padding:0 10px}.solution-language-tabs button{background:none;border:0;border-bottom:2px solid transparent;color:#92929b;padding:12px 16px;white-space:nowrap}.solution-language-tabs button[aria-selected=true]{color:#c898ff;border-bottom-color:#bb80ff}.solution-code-actions{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 15px 0;color:#898996;font-size:11px}.solution-code-actions button{display:flex;align-items:center;gap:7px;background:#17171c;border:1px solid #484854;border-radius:7px;color:#d3d3dc;padding:6px 11px;font-size:12px}.coding-workspace .solution-code-card pre{white-space:pre!important;overflow-wrap:normal!important;overflow-x:auto!important}.template-notice{font-size:11px;background:#31293f;color:#d1b4f4;padding:8px 12px}.template-notice button{background:none;border:0;text-decoration:underline;color:inherit;padding:0 3px}
 .custom-tests textarea{display:block;width:100%;background:#17171c;border:1px solid #454551;border-radius:7px;padding:9px;color:#eee;font:13px/1.6 ui-monospace,monospace}.custom-tests h3{font-size:16px;color:#eee}.custom-tests p,.custom-tests details{font-size:12px;color:#a6a6b3;margin:9px 0}
+
+/* Keep reading and coding text comfortable at normal browser zoom. */
+.coding-workspace{font-size:16px;line-height:1.75}
+.workspace-header{min-height:64px;height:auto;padding-top:10px;padding-bottom:10px}
+.workspace-tabs button{font-size:15px;padding-top:12px;padding-bottom:12px}
+.statement-content h1{font-size:28px;line-height:1.35}
+.problem-meta span{font-size:14px}
+.problem-description,.example{font-size:17px;line-height:1.8}
+.example h3{font-size:18px}
+.solution-heading{font-size:14px}
+.solution-guide h2{font-size:20px}
+.solution-guide li{font-size:17px}
+.solution-contract{font-size:15px}
+.solution-contract small{font-size:14px;color:#b1aabd}
+.solution-complexity span{font-size:14px}
+.solution-language-tabs button{font-size:16px}
+.solution-code-actions,.solution-code-actions button{font-size:14px}
+.draft-label,.template-notice{font-size:13px}
+.test-content label{font-size:15px;color:#b9b9c7}
+.test-content pre,.custom-tests textarea{font-size:16px;line-height:1.7}
+.custom-tests h3{font-size:19px}
+.custom-tests p,.custom-tests details{font-size:15px}
+@media(max-width:800px){.workspace-brand,.problem-list-link{font-size:14px}.workspace-header{flex-wrap:wrap;gap:8px}.workspace-actions{gap:6px}.statement-content{padding:20px}.statement-content h1{font-size:25px}.problem-description,.example,.solution-guide li{font-size:16px}.workspace-tabs{gap:15px;padding:0 12px}}

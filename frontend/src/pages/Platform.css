@@ -6,3 +6,51 @@
 .landing-nav{position:relative;z-index:50;padding:24px 20px 0}.landing-nav .hub-nav{margin-bottom:0;backdrop-filter:blur(16px)}.hub-brand img{flex-shrink:0}.hub-nav{gap:12px}.hub-nav-links>a{padding:7px 9px}.hub-account>div a.active{color:#fff}.hub-nav-links{min-width:0}@media(min-width:801px) and (max-width:1000px){.hub-nav{gap:7px;padding:10px 13px}.hub-brand{font-size:17px}.hub-nav-links>a{font-size:11px;padding:7px}.hub-account summary>span:not(.hub-avatar){display:none}}
 
 .hub-nav-links{overflow-x:auto}.hub-nav-links>a,.hub-account{flex-shrink:0}
+
+/* Readable typography aligned with the supplied practice-page reference. */
+.hub-page{font-size:16px;line-height:1.65}
+.hub-nav{font-size:15px;line-height:1.5}
+.hub-brand{font-size:22px}
+.hub-nav .hub-button{font-size:15px}
+.practice-page .practice-heading p{font-size:16px;color:#b7b7c1}
+.practice-page .hub-eyebrow,.practice-feature>span{font-size:12px}
+.practice-feature{min-height:245px}
+.practice-feature h2{font-size:28px;line-height:1.3}
+.practice-feature p,.practice-feature b{font-size:15px;line-height:1.6}
+.practice-layout{grid-template-columns:minmax(0,1fr) 320px}
+.topic-heading h2{font-size:21px;letter-spacing:-.3px}
+.topic-heading>span{font-size:14px;color:#acacb7}
+.topic-chips{gap:10px;margin-bottom:14px}
+.topic-chips button{font-size:16px;line-height:1.5;padding:10px 15px;color:#d4d4dd;min-height:46px}
+.topic-chips button small{font-size:14px;color:#b5b5c0}
+.topic-expand{display:block;margin:8px auto 24px;border:1px solid #365b8d;border-radius:24px;background:#243144;color:#80b6ff;padding:7px 18px;font-size:15px}
+.company-strip{font-size:15px;gap:10px;margin-top:22px}
+.company-strip>span{font-size:16px;color:#b0b0bd}
+.company-strip a{font-size:15px;padding:7px 13px;color:#ceced9}
+.problem-search{padding:11px 14px;min-height:46px}
+.problem-search input{font-size:16px}
+.problem-controls select,.problem-list-meta select{font-size:15px;min-height:44px;color:#c9c9d4}
+.save-later,.random-problem{font-size:15px!important;min-height:46px;padding:10px 13px;color:#c9c9d4}
+.problem-list-meta{font-size:14px;color:#aaaab6;margin:16px 0 8px}
+.practice-table{min-width:670px}
+.practice-table th{font-size:15px;font-weight:600;color:#b4b4c0;padding:17px 12px}
+.practice-table td{font-size:16px;padding:21px 12px;line-height:1.6}
+.practice-table td:nth-child(3){font-size:17px;min-width:225px}
+.problem-number,.acceptance-value{color:#b6b6c4}
+.problem-level{font-size:14px;padding:4px 11px;font-weight:500}
+.practice-pagination{font-size:14px;color:#ababba;gap:15px}
+.practice-pagination button{padding:8px}
+.hub-card-heading h3{font-size:19px;line-height:1.4}
+.activity-calendar>p{font-size:17px;color:#bebecb}
+.calendar-grid{gap:6px}
+.calendar-grid>span{font-size:14px}
+.calendar-grid .weekday{font-size:12px;color:#aaaab8}
+.calendar-legend{font-size:13px;color:#ababba}
+.weekly-card>p,.interview-promo p,.interview-promo a{font-size:15px;line-height:1.65}
+.weekly-card small{font-size:14px;color:#acacba}
+.interview-promo h3{font-size:21px}
+.hub-error,.hub-notice{font-size:15px}
+@media(max-width:1150px){.practice-layout{grid-template-columns:minmax(0,1fr) 290px;gap:22px}.practice-feature h2{font-size:25px}}
+@media(max-width:800px){.hub-nav-links>a{font-size:15px;padding:9px 11px}.hub-nav-links{justify-content:flex-start}.practice-layout{grid-template-columns:1fr}.practice-feature{min-width:300px}.practice-feature h2{font-size:26px}.practice-heading>div>p{font-size:15px}.problem-list-meta{font-size:14px;gap:10px;flex-wrap:wrap}.problem-controls{gap:10px}.problem-search{flex-basis:100%}.problem-list-meta>div{flex-wrap:wrap}.practice-pagination{flex-wrap:wrap}.practice-pagination>span{max-width:none}.practice-table td{padding:18px 10px}.hub-card-heading h3{font-size:18px}}
+@media(min-width:801px) and (max-width:1000px){.hub-nav-links>a{font-size:14px}.hub-brand{font-size:20px}}
+@media(max-width:650px){.practice-sidebar{grid-template-columns:1fr}}
