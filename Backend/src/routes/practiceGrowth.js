@@ -11,12 +11,7 @@ router.use(require('../middleware/userMiddleware'));
 const wrap=fn=>async(req,res)=>{try{await fn(req,res);}catch(e){res.status(e.statusCode||500).json({message:e.statusCode?e.message:'Request failed. Please retry.'});}};
 const fail=(message,statusCode=400)=>{throw Object.assign(new Error(message),{statusCode});};
 const id=value=>mongoose.isValidObjectId(value);
-const usage=new Map();
-function executionGate(user,now=Date.now()){
- const key=String(user);let row=usage.get(key);if(!row||now-row.start>=60000){if(row?.busy)return null;row={start:now,count:0,busy:false};usage.set(key,row);}if(row.busy||row.count>=12)return null;row.count++;row.busy=true;
- if(usage.size>10000)for(const [k,v]of usage)if(!v.busy&&now-v.start>60000)usage.delete(k);
- return ()=>{row.busy=false;};
-}
+const executionGate=require('../utils/executionGate');
 router.post('/compiler/run',wrap(async(req,res)=>{
  const {code,language,stdin=''}=req.body||{},lang={javascript:63,cpp:54,java:62,python:71}[language];
  if(!lang||typeof code!=='string'||!code.trim()||code.length>50000||typeof stdin!=='string'||stdin.length>20000)fail('Choose a supported language; code must be 1–50000 characters and input at most 20000 characters.');

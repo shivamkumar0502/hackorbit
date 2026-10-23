@@ -59,6 +59,8 @@ app.use('/api/contest', require('./routes/contest'));
 app.use('/api/learn', require('./routes/learn'));
 app.use('/api/practice', require('./routes/practiceGrowth'));
 app.use('/api/peer', require('./routes/peer'));
+app.use('/api/features',require('./routes/platformFeatures'));
+app.use('/api/peer-media',require('./routes/peerMedia'));
 app.use('/api/events', require('./routes/events'));
 app.use("/uploads", express.static("uploads"));
 

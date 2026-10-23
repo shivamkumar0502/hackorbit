@@ -9,7 +9,7 @@ function matches(doc,query){return Object.entries(query).every(([key,value])=>{
  return equal(actual,value);
 });}
 function createModels(){
- const tables={Daily:[],Revision:[],Progress:[],Peer:[],Event:[],Entry:[],Problem:[],Submission:[],Discussion:[]};
+ const tables={Daily:[],Revision:[],Progress:[],Peer:[],Event:[],Entry:[],Problem:[],Submission:[],Discussion:[],PublicProfile:[],Report:[],Signal:[],Review:[],Rtc:[]};
  class Query{
   constructor(run){this.run=run;this.sortBy=null;this.max=Infinity;this.field=null;}
   select(){return this;}sort(value){this.sortBy=value;return this;}limit(value){this.max=value;return this;}populate(field){this.field=field;return this;}

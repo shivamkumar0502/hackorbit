@@ -112,6 +112,7 @@ import { NavLink } from 'react-router-dom';
 function Admin() {
 
   const adminOptions = [
+    {id:'quality',title:'Problem quality',description:'Review configuration and user issue reports',icon:Edit,color:'bg-purple-500 hover:bg-purple-600',route:'/admin/quality'},
     {
       id: 'create',
       title: 'Create Problem',
