@@ -158,13 +158,17 @@ const getProblemById = async(req,res)=>{
       return res.status(400).send("ID Missing");
 
     const getProblem = await Problem.findById(id).select(
-  "_id title description difficulty tags visibleTestCases startCode referenceSolution"
+  "_id title description difficulty tags visibleTestCases startCode referenceSolution functionMode codeVersion methodName functionSignature functionReturn solutionSteps"
 ).lean();
 
    // video ka jo bhi url wagera le aao
    
    if(!getProblem)
     return res.status(404).send("Problem is Missing");
+    if(getProblem.functionMode) {
+      const {formatExample}=require('../data/functionPrograms');
+      getProblem.visibleTestCases=getProblem.visibleTestCases.map(test=>({...test,displayInput:formatExample(getProblem.methodName,test.input)}));
+    }
     const videos = await solutionVideo.findOne({problemId:id}).sort({createdAt:-1});
 
     if(videos){
@@ -196,7 +200,7 @@ const getProblemById = async(req,res)=>{
 //     }
 
 //     const problem = await Problem.findById(id).select(
-//       "_id title description difficulty tags visibleTestCases startCode referenceSolution"
+//       "_id title description difficulty tags visibleTestCases startCode referenceSolution functionMode codeVersion methodName functionSignature functionReturn solutionSteps"
 //     );
 
 //     if (!problem) {

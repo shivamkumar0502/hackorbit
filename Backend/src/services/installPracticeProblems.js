@@ -6,10 +6,20 @@ const Migration=mongoose.models.platformMigration||mongoose.model('platformMigra
 async function installPracticeProblems({force=false}={}){
  const pending=[];for(const batch of batches)if(force||!await Migration.exists({_id:batch[0]}))pending.push(batch);
  const seedKeys=batches.flatMap(([,p])=>p.map(p=>p.seedKey));
- if(!pending.length)return {added:0,total:await Problem.countDocuments({seedKey:{$in:seedKeys}})};
+ const upgrade='expanded-function-solutions-v3';
+ const needsUpgrade=!await Migration.exists({_id:upgrade});
+ if(!pending.length&&!needsUpgrade)return {added:0,total:await Problem.countDocuments({seedKey:{$in:seedKeys}})};
  const admin=await User.findOne({role:'admin'}).select('_id').lean();if(!admin)return {added:0,total:0,skipped:'No administrator exists.'};
  await Problem.init();let added=0;
  for(const [migration,problems]of pending){for(const problem of problems){const result=await Problem.updateOne({seedKey:problem.seedKey},{$setOnInsert:{...problem,problemCreator:admin._id}},{upsert:true,runValidators:true});added+=result.upsertedCount||0;}await Migration.updateOne({_id:migration},{$set:{completedAt:new Date()}},{upsert:true});}
+ if(needsUpgrade) {
+  for(const problem of batches[1][1]) {
+   const {startCode,referenceSolution,functionMode,driverCode,codeVersion,methodName,functionSignature,functionReturn,solutionSteps}=problem;
+   await Problem.updateOne({seedKey:problem.seedKey},{$set:{startCode,referenceSolution,functionMode,driverCode,codeVersion,methodName,functionSignature,functionReturn,solutionSteps}},{runValidators:true});
+  }
+  console.log('Practice function templates and three-language solutions upgraded: 50 definitions.');
+  await Migration.updateOne({_id:upgrade},{$set:{completedAt:new Date()}},{upsert:true});
+ }
  return {added,total:await Problem.countDocuments({seedKey:{$in:seedKeys}})};
 }
 module.exports=installPracticeProblems;

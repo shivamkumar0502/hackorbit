@@ -2,6 +2,13 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 const problemSchema = new Schema({
+    codeVersion: {type: Number, default: 1},
+    functionMode: {type: Boolean, default: false},
+    driverCode: {cpp:String, java:String, javascript:String},
+    methodName: String,
+    functionSignature: String,
+    functionReturn: String,
+    solutionSteps: [String],
     seedKey: { type: String, unique: true, sparse: true },
     hints: { type: [String], default: [] },
     companies: { type: [String], default: [] },
@@ -25,6 +32,7 @@ const problemSchema = new Schema({
     },
     visibleTestCases:[
         {
+            displayInput: String,
             input:{
                 type:String,
                 required:true,
@@ -72,6 +80,9 @@ const problemSchema = new Schema({
                 type:String,
                 required:true,
             },
+            solutionCode: String,
+            timeComplexity: String,
+            spaceComplexity: String,
             completeCode:{
                 type:String,
                 required:true

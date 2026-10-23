@@ -2,6 +2,7 @@ const Problem = require('../models/problem');
 const Submission = require('../models/submission');
 const User = require('../models/user');
 const { getLanguageById, submitBatch, submitToken } = require('../utils/problemUtility');
+const {buildSource} = require('../utils/functionDriver');
 
 function summarize(results) {
   let status = 'accepted';
@@ -22,14 +23,15 @@ const execute = mode => async (req, res) => {
   try {
     const { code, language } = req.body;
     const languageId = getLanguageById(language);
-    if (typeof code !== 'string' || !code.trim() || !languageId) return res.status(400).json({ message: 'Provide code and a supported programming language.' });
+    if (typeof code !== 'string' || !code.trim() || code.length > 50000 || !languageId) return res.status(400).json({ message: 'Provide code and a supported programming language.' });
     const problem = await Problem.findById(req.params.id);
     if (!problem) return res.status(404).json({ message: 'Problem not found.' });
-    const cases = mode === 'submit' ? problem.hiddenTestCases : problem.visibleTestCases;
+    const cases = mode === 'submit' ? [...problem.visibleTestCases, ...problem.hiddenTestCases] : problem.visibleTestCases;
     if (!cases?.length) return res.status(422).json({ message: 'This problem has no configured testcases.' });
     if (mode === 'submit') submission = await Submission.create({ userId: req.result._id, problemId: problem._id, code,
       language: language === 'cpp' ? 'c++' : language, status: 'pending', testCasesTotal: cases.length });
-    const batch = await submitBatch(cases.map(test => ({ source_code: code, language_id: languageId, stdin: test.input, expected_output: test.output })));
+    const source = buildSource(problem, code, language);
+    const batch = await submitBatch(cases.map(test => ({ source_code: source, language_id: languageId, stdin: test.input, expected_output: test.output })));
     const results = await submitToken(batch.map(item => item.token));
     const summary = summarize(results);
     if (submission) {
