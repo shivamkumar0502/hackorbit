@@ -6,7 +6,11 @@ const [recording,setRecording] = useState(false);
 
 const startRecording = ()=>{
 
-const recognition = new webkitSpeechRecognition();
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (!SpeechRecognition) return;
+const recognition = new SpeechRecognition();
+recognition.onend = () => setRecording(false);
+recognition.onerror = () => setRecording(false);
 
 recognition.lang = "en-US";
 
